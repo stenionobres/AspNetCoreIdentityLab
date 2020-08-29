@@ -12,6 +12,8 @@ using AspNetCoreIdentityLab.Application.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using AspNetCoreIdentityLab.Persistence.EntityFrameworkContexts;
+using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -27,11 +29,9 @@ namespace AspNetCoreIdentityLab.Application
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDbContext<AspNetCoreIdentityLabDbContext>();
+            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+                    .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
