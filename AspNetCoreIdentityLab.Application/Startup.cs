@@ -21,7 +21,7 @@ namespace AspNetCoreIdentityLab.Application
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AspNetCoreIdentityLabDbContext>();
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<User>()
                     .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
