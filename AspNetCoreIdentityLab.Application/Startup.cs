@@ -22,8 +22,8 @@ namespace AspNetCoreIdentityLab.Application
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AspNetCoreIdentityLabDbContext>();
-
-            services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions())
+            
+            services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
                     .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
 
             services.AddControllersWithViews();
@@ -60,10 +60,8 @@ namespace AspNetCoreIdentityLab.Application
             });
         }
 
-        private IdentityOptions GetDefaultIdentityOptions()
+        private void GetDefaultIdentityOptions(IdentityOptions identityOptions)
         {
-            var identityOptions = new IdentityOptions();
-
             // Default Identity Password settings.
             identityOptions.Password.RequireDigit = true;
             identityOptions.Password.RequireLowercase = true;
@@ -71,8 +69,6 @@ namespace AspNetCoreIdentityLab.Application
             identityOptions.Password.RequireUppercase = true;
             identityOptions.Password.RequiredLength = 6;
             identityOptions.Password.RequiredUniqueChars = 1;
-
-            return identityOptions;
         }
     }
 }
