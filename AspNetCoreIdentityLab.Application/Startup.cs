@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AspNetCoreIdentityLab.Persistence.EntityFrameworkContexts;
 using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
+using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -21,8 +22,10 @@ namespace AspNetCoreIdentityLab.Application
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AspNetCoreIdentityLabDbContext>();
-            services.AddDefaultIdentity<User>()
+
+            services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions())
                     .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -55,6 +58,21 @@ namespace AspNetCoreIdentityLab.Application
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+        }
+
+        private IdentityOptions GetDefaultIdentityOptions()
+        {
+            var identityOptions = new IdentityOptions();
+
+            // Default Identity Password settings.
+            identityOptions.Password.RequireDigit = true;
+            identityOptions.Password.RequireLowercase = true;
+            identityOptions.Password.RequireNonAlphanumeric = true;
+            identityOptions.Password.RequireUppercase = true;
+            identityOptions.Password.RequiredLength = 6;
+            identityOptions.Password.RequiredUniqueChars = 1;
+
+            return identityOptions;
         }
     }
 }
