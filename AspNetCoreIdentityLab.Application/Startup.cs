@@ -25,6 +25,7 @@ namespace AspNetCoreIdentityLab.Application
             services.AddDbContext<AspNetCoreIdentityLabDbContext>();
             
             services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
+                    .AddUserValidator<CustomUserValidator>()
                     .AddPasswordValidator<CustomPasswordValidator>()
                     .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
 
