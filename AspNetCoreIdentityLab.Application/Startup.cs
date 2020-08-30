@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using AspNetCoreIdentityLab.Persistence.EntityFrameworkContexts;
 using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
 using Microsoft.AspNetCore.Identity;
+using AspNetCoreIdentityLab.Application.IdentityValidators;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -24,6 +25,7 @@ namespace AspNetCoreIdentityLab.Application
             services.AddDbContext<AspNetCoreIdentityLabDbContext>();
             
             services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
+                    .AddPasswordValidator<CustomPasswordValidator>()
                     .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
 
             services.AddControllersWithViews();
