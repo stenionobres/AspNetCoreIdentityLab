@@ -2,7 +2,7 @@
 
 namespace AspNetCoreIdentityLab.Persistence.DataTransferObjects
 {
-    public class User : IdentityUser
+    public class User : IdentityUser<int>
     {
     }
 }
