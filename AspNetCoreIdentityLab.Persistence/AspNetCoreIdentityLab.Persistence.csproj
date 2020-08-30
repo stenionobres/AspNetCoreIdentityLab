@@ -1,8 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\AspNetCoreIdentityLab\20200829121204_IdentityStructure.cs" />
+    <Compile Remove="Migrations\AspNetCoreIdentityLab\20200829121204_IdentityStructure.Designer.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.7" />
@@ -12,6 +17,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\AspNetCoreIdentityLab\" />
   </ItemGroup>
 
 </Project>
