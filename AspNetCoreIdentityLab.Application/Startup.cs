@@ -72,6 +72,8 @@ namespace AspNetCoreIdentityLab.Application
             identityOptions.Password.RequireUppercase = true;
             identityOptions.Password.RequiredLength = 6;
             identityOptions.Password.RequiredUniqueChars = 1;
+
+            identityOptions.SignIn.RequireConfirmedAccount = true;
         }
     }
 }
