@@ -7,6 +7,8 @@ using AspNetCoreIdentityLab.Persistence.EntityFrameworkContexts;
 using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
 using Microsoft.AspNetCore.Identity;
 using AspNetCoreIdentityLab.Application.IdentityValidators;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using AspNetCoreIdentityLab.Application.EmailSenders;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -31,6 +33,8 @@ namespace AspNetCoreIdentityLab.Application
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfiguration());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +78,19 @@ namespace AspNetCoreIdentityLab.Application
             identityOptions.Password.RequiredUniqueChars = 1;
 
             identityOptions.SignIn.RequireConfirmedAccount = true;
+            identityOptions.SignIn.RequireConfirmedEmail = true;
         }
+
+        private EmailSmtpSender GetEmailConfiguration()
+        {
+            return new EmailSmtpSender(
+                Configuration["EmailSmtpSender:Host"],
+                Configuration.GetValue<int>("EmailSmtpSender:Port"),
+                Configuration.GetValue<bool>("EmailSmtpSender:EnableSSL"),
+                Configuration["EmailSmtpSender:UserName"],
+                Configuration["EmailSmtpSender:Password"]
+            );
+        }
+        
     }
 }

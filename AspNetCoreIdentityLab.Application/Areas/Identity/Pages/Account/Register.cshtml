@@ -4,6 +4,8 @@
     ViewData["Title"] = "Register";
 }
 
+@inject UserManager<User> UserManager
+
 <h1>@ViewData["Title"]</h1>
 
 <div class="row">
@@ -13,7 +15,14 @@
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Input.EmailOrUsername"></label>
+                @if (UserManager.Options.SignIn.RequireConfirmedEmail)
+                {
+                    <label>Email</label>
+                }
+                else
+                {
+                    <label asp-for="Input.EmailOrUsername"></label>
+                }
                 <input asp-for="Input.EmailOrUsername" class="form-control" />
                 <span asp-validation-for="Input.EmailOrUsername" class="text-danger"></span>
             </div>
