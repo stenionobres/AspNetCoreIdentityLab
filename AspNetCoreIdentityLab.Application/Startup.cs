@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using AspNetCoreIdentityLab.Application.IdentityValidators;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using AspNetCoreIdentityLab.Application.EmailSenders;
+using System;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -30,6 +31,9 @@ namespace AspNetCoreIdentityLab.Application
                     .AddUserValidator<CustomUserValidator>()
                     .AddPasswordValidator<CustomPasswordValidator>()
                     .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
+
+            // Default Identity TokenLifespan value.
+            services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromDays(1));
 
             services.AddControllersWithViews();
             services.AddRazorPages();
