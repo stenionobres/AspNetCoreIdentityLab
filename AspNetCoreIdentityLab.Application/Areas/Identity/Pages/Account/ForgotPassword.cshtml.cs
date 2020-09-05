@@ -32,19 +32,20 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
-            public string Email { get; set; }
+            [Display(Name = "Email/Username")]
+            public string EmailOrUsername { get; set; }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                var user = await _userManager.FindByEmailAsync(Input.EmailOrUsername);
+
+                if (user == null || (_userManager.Options.SignIn.RequireConfirmedEmail && !await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return RedirectToPage("./ForgotPasswordConfirmation");
+                    return RedirectToPage("./ForgotPasswordConfirmation", new { email = Input.EmailOrUsername, confirmationUrl = string.Empty });
                 }
 
                 // For more information on how to enable account confirmation and password reset please 
@@ -57,12 +58,15 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(
-                    Input.Email,
+                if (_userManager.Options.SignIn.RequireConfirmedEmail)
+                {
+                    await _emailSender.SendEmailAsync(
+                    Input.EmailOrUsername,
                     "Reset Password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                return RedirectToPage("./ForgotPasswordConfirmation");
+                }
+                
+                return RedirectToPage("./ForgotPasswordConfirmation", new { email = Input.EmailOrUsername, confirmationUrl = callbackUrl });
             }
 
             return Page();
