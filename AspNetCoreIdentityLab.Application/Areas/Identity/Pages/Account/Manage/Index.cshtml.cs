@@ -36,6 +36,9 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Display(Name = "Occupation")]
+            public string Occupation { get; set; }
         }
 
         private async Task LoadAsync(User user)
@@ -47,7 +50,8 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Occupation = user.Occupation
             };
         }
 
@@ -88,6 +92,9 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            user.Occupation = Input.Occupation;
+
+            await _userManager.UpdateAsync(user);
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();

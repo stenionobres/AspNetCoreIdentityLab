@@ -49,6 +49,9 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
             [Display(Name = "Email/Username")]
             public string EmailOrUsername { get; set; }
 
+            [Display(Name = "Occupation")]
+            public string Occupation { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -73,7 +76,7 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = Input.EmailOrUsername, Email = Input.EmailOrUsername };
+                var user = new User { UserName = Input.EmailOrUsername, Email = Input.EmailOrUsername, Occupation = Input.Occupation };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
