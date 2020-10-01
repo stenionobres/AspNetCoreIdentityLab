@@ -12,7 +12,7 @@ After the case studies, the main conclusions were documented in this file and se
 
 * [Prerequisites](#prerequisites)
 * Getting Started
-* Project Requirements
+* [Project Requirements](#project-requirements)
 * Identity Default Database Model
 * Project Structure
     * Used Packages
@@ -33,3 +33,19 @@ What needs to be installed on the machine to extend and debug the project:
     Visual Studio Community 2019;
     Net Core SDK 3.1;
     SQL Server
+
+## Project Requirements
+
+In order to experience the features of the ASP.NET Core Identity and establish the best and most efficient usage practices, some requirements have been established.
+
+These requirements aim to bring the case study closer to a real use scenario where several characteristics of the framework must be explored.
+
+Below are listed which requirements the solution meets:
+
+    Many types of login;
+	Password Configuration;
+	Account customization;
+	Account confirmation by email;
+	Change database schema;
+	Use diferents database;
+	Many persistence ways;
