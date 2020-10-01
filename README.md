@@ -10,7 +10,7 @@ After the case studies, the main conclusions were documented in this file and se
 
 ## Table of contents
 
-* Prerequisites
+* [Prerequisites](#prerequisites)
 * Getting Started
 * Project Requirements
 * Identity Default Database Model
@@ -25,3 +25,11 @@ After the case studies, the main conclusions were documented in this file and se
 * Lessons learned
 * References used
 * Authors
+
+## Prerequisites
+
+What needs to be installed on the machine to extend and debug the project:
+
+    Visual Studio Community 2019;
+    Net Core SDK 3.1;
+    SQL Server
