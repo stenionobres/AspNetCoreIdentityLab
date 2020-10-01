@@ -1,8 +1,8 @@
-# Asp Net Core Identity Lab
+# ASP.NET Core Identity Lab
 
 Read this documentation in other languages: [Portuguese (pt-BR)](README-pt-BR.md)
 
-Application created with the main objective of exploring the features and characteristics of the Asp Net Core Identity.
+Application created with the main objective of exploring the features and characteristics of the ASP.NET Core Identity.
 
 In this application, several real usage scenarios were tested based on a mini application.
 
