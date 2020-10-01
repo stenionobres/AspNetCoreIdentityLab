@@ -13,11 +13,11 @@ After the case studies, the main conclusions were documented in this file and se
 * Prerequisites
 * Getting Started
 * Project Requirements
-* ASP.NET Core Identity Database Model
+* Identity Default Database Model
 * Project Structure
     * Used Packages
 * Authentication x Authorization
-* Basic Configuration to use Identity
+* Identity Basic Configuration 
     * IdentityOptions
 * Entity Framework x Another persistence
 * Logging
