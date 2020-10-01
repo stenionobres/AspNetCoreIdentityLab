@@ -16,7 +16,7 @@ After the case studies, the main conclusions were documented in this file and se
 * Identity Default Database Model
 * Project Structure
     * Used Packages
-* Authentication x Authorization
+* [Authentication x Authorization](#authentication-x-authorization)
 * Identity Basic Configuration 
     * IdentityOptions
 * Entity Framework x Another persistence
@@ -49,3 +49,9 @@ Below are listed which requirements the solution meets:
 	Change database schema;
 	Use diferents database;
 	Many persistence ways;
+
+## Authentication x Authorization
+
+>**Authentication:** The process that answer the question, Who are you in the application?
+
+>**Authorization:** The process that answer the question, What can you do in the application?
