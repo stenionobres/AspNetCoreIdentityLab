@@ -24,7 +24,7 @@ After the case studies, the main conclusions were documented in this file and se
 * Fast tips
 * Lessons learned
 * References used
-* Authors
+* [Authors](#authors)
 
 ## Prerequisites
 
@@ -55,3 +55,7 @@ Below are listed which requirements the solution meets:
 >**Authentication:** The process that answer the question, Who are you in the application?
 
 >**Authorization:** The process that answer the question, What can you do in the application?
+
+## Authors
+
+* **Stenio Nobres** - [Github](https://github.com/stenionobres)
