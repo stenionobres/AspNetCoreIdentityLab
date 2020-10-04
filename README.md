@@ -42,13 +42,32 @@ These requirements aim to bring the case study closer to a real use scenario whe
 
 Below are listed which requirements the solution meets:
 
-    Many types of login;
-	Password Configuration;
-	Account customization;
+    Use of email or username to login;
+	Custom user data;
 	Account confirmation by email;
+    Explore IdentityOptions;
+    Remember, recover and reset password;
+    Password Rotation;
+    Captchas;
+    Two Factor Authentication (2FA);
+    Use of authentication providers (Google, Facebook, Github, Microsoft, Twitter);
+    Block concurrent logins;
+    Track logins of different ips;
+    Single SingOn / Windows authentication;
+    Password Policy;
+    Email and Username Policy;
 	Change database schema;
-	Use diferents database;
-	Many persistence ways;
+	Use diferents databases;
+	Custom storage providers;
+    Create an Authentication API;
+    Logging;
+    WS-Federation;
+    Roles;
+    Claims;
+    Policies;
+    User groups;
+    Authorization levels (Groups of functionalities, functionalities, functions);
+    Create an Authorization API;
 
 ## Authentication x Authorization
 
