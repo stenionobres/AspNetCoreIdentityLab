@@ -21,6 +21,9 @@ After the case studies, the main conclusions were documented in this file and se
     * IdentityOptions
 * Entity Framework x Another persistence
 * [Registering an user](#registering-an-user)
+    * [How to customize user atributes?](#how-to-customize-user-atributes?)
+    * [Custom register rules](#custom-register-rules)
+    * [Account confirmation by email](#account-confirmation-by-email)
 * Logging
 * Fast tips
 * Lessons learned
