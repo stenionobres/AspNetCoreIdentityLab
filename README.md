@@ -16,8 +16,8 @@ After the case studies, the main conclusions were documented in this file and se
 * [Identity Default Database Model](#identity-default-database-model)
 * [Project Structure](#project-structure)
     * [Used Packages](#used-packages)
-    * [AspNetCoreIdentityLab.Application](#AspNetCoreIdentityLab.Application)
-    * [AspNetCoreIdentityLab.Persistence](#AspNetCoreIdentityLab.Persistence)
+    * [AspNetCoreIdentityLab.Application](#AspNetCoreIdentityLab-Application)
+    * [AspNetCoreIdentityLab.Persistence](#AspNetCoreIdentityLab-Persistence)
 * [Authentication x Authorization](#authentication-x-authorization)
 * Identity Basic Configuration 
     * IdentityOptions
@@ -119,9 +119,9 @@ The solution `AspNetCoreIdentityLab` is divided into two projects: `AspNetCoreId
 
 >[Microsoft.Extensions.Logging.Console 3.1.7](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Console/3.1.7)
 
-### AspNetCoreIdentityLab.Application
+### AspNetCoreIdentityLab-Application
 
-### AspNetCoreIdentityLab.Persistence
+### AspNetCoreIdentityLab-Persistence
 
 It is a `.Net Core Class Library` which has the responsibility to maintain the EF Core configurations and carry out the operations in the databases.
 
