@@ -16,8 +16,8 @@ After the case studies, the main conclusions were documented in this file and se
 * [Identity Default Database Model](#identity-default-database-model)
 * [Project Structure](#project-structure)
     * [Used Packages](#used-packages)
-    * [AspNetCoreIdentityLab.Application](#AspNetCoreIdentityLab-Application)
-    * [AspNetCoreIdentityLab.Persistence](#AspNetCoreIdentityLab-Persistence)
+    * [AspNetCoreIdentityLab-Application](#AspNetCoreIdentityLab-Application)
+    * [AspNetCoreIdentityLab-Persistence](#AspNetCoreIdentityLab-Persistence)
 * [Authentication x Authorization](#authentication-x-authorization)
 * Identity Basic Configuration 
     * IdentityOptions
