@@ -20,7 +20,7 @@ After the case studies, the main conclusions were documented in this file and se
 * Identity Basic Configuration 
     * IdentityOptions
 * Entity Framework x Another persistence
-* [Registering a user](#registering-a-user)
+* [Registering an user](#registering-an-user)
 * Logging
 * Fast tips
 * Lessons learned
