@@ -13,7 +13,7 @@ After the case studies, the main conclusions were documented in this file and se
 * [Prerequisites](#prerequisites)
 * Getting Started
 * [Project Requirements](#project-requirements)
-* Identity Default Database Model
+* [Identity Default Database Model](#identity-default-database-model)
 * Project Structure
     * Used Packages
 * [Authentication x Authorization](#authentication-x-authorization)
@@ -72,6 +72,30 @@ Below are listed which requirements the solution meets:
     User groups;
     Authorization levels (Groups of functionalities, functionalities, functions);
     Create an Authorization API;
+
+## Identity Default Database Model
+
+The Asp Net Core Identity default database consists of the following entity types:
+
+|**Entity Name**    |**Description**                                               |
+|-------------------|--------------------------------------------------------------|
+|  AspNetUsers      | Represents the user                                          |
+|  AspNetRoles      | Represents a role                                            |
+|  AspNetUserClaims | Represents a claim that a user possesses                     |
+|  AspNetUserTokens | Represents an authentication token for a user                |
+|  AspNetUserLogins | Associates a user with a login                               |
+|  AspNetRoleClaims | Represents a claim that's granted to all users within a role |
+|  AspNetUserRoles  | A join entity that associates users and roles                |
+
+The entity types are related to each other in the following ways:
+
+* Each User can have many UserClaims;
+* Each User can have many UserLogins;
+* Each User can have many UserTokens;
+* Each Role can have many associated RoleClaims;
+* Each User can have many associated Roles, and each Role can be associated with many Users. This is a many-to-many relationship that requires a join table in the database. The join table is represented by the UserRole entity.
+
+![image info](./readme-pictures/aspnet-core-identity-default-database-model.jpg)
 
 ## Authentication x Authorization
 
