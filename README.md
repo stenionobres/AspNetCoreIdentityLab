@@ -14,8 +14,10 @@ After the case studies, the main conclusions were documented in this file and se
 * Getting Started
 * [Project Requirements](#project-requirements)
 * [Identity Default Database Model](#identity-default-database-model)
-* Project Structure
-    * Used Packages
+* [Project Structure](#project-structure)
+    * [Used Packages](#used-packages)
+    * [AspNetCoreIdentityLab.Application](#AspNetCoreIdentityLab.Application)
+    * [AspNetCoreIdentityLab.Persistence](#AspNetCoreIdentityLab.Persistence)
 * [Authentication x Authorization](#authentication-x-authorization)
 * Identity Basic Configuration 
     * IdentityOptions
@@ -96,6 +98,40 @@ The entity types are related to each other in the following ways:
 * Each User can have many associated Roles, and each Role can be associated with many Users. This is a many-to-many relationship that requires a join table in the database. The join table is represented by the UserRole entity.
 
 ![image info](./readme-pictures/aspnet-core-identity-default-database-model.jpg)
+
+## Project Structure
+
+The solution `AspNetCoreIdentityLab` is divided into two projects: `AspNetCoreIdentityLab.Application` and `AspNetCoreIdentityLab.Persistence`. Below each of the projects are detailed.
+
+### Used Packages
+
+>Net Core 3.1
+
+>[Asp Net Core Identity UI 3.1.1](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.UI/3.1.1)
+
+>[VisualStudio Web CodeGeneration Design 3.1.4](https://www.nuget.org/packages/Microsoft.VisualStudio.Web.CodeGeneration.Design/3.1.4)
+
+>[Entity Framework Core 3.1.7](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore/3.1.7)
+
+>[Entity.Framework.Core.Sql.Server 3.1.7](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer/3.1.7)
+
+>[Microsoft.EntityFrameworkCore.Tools 3.1.7](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools/3.1.7)
+
+>[Microsoft.Extensions.Logging.Console 3.1.7](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Console/3.1.7)
+
+### AspNetCoreIdentityLab.Application
+
+### AspNetCoreIdentityLab.Persistence
+
+It is a `.Net Core Class Library` which has the responsibility to maintain the EF Core configurations and carry out the operations in the databases.
+
+The main namespaces are: `DataTransferObjects`, `EntityFrameworkContexts` and `Migrations`.
+
+* **DataTransferObjects**: classes that represent the models that map the tables in each database.
+
+* **EntityFrameworkContexts**: classes that configure access to databases. In this case study, three databases were used.
+
+* **Migrations**: classes that represent the migrations that will be applied in each database.
 
 ## Authentication x Authorization
 
