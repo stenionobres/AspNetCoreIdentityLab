@@ -112,6 +112,48 @@ To add custom rules the `IUserValidator<TUser>` interface must be used. An examp
 
 The custom rule is configured on `ConfigureServices` method in [Startup](./AspNetCoreIdentityLab.Application/Startup.cs) class.
 
+### Account confirmation by email
+
+Asp Net Core Identity provides account confirmation by email, for this some configurations are needed.
+In the first the `SignIn` options on `IdentityOptions` should be changed.
+
+``` C#
+identityOptions.SignIn.RequireConfirmedAccount = true;
+identityOptions.SignIn.RequireConfirmedEmail = true;
+```
+
+A class that implements the `IEmailSender` interface must be created. This class should use some SMTP credentials like [SendGrid](https://sendgrid.com/).
+
+With a developer purpose the [Gmail](https://www.hostinger.com.br/tutoriais/aprenda-a-utilizar-o-smtp-google/) SMTP was used in this project. The [EmailSmtpSender](./AspNetCoreIdentityLab.Application/EmailSenders/EmailSmtpSender.cs) class shows how to email could be send.
+
+The SMTP credentials was saved using [Secret Manager tool](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-3.1&tabs=windows). This resource can be acessed with right click on AspNetCoreIdentityLab.Application project option **Manage User Secrets**, that is showed in a image below:
+
+![image info](./readme-pictures/manage-user-secrets.jpg)
+
+The source code uses a usersecrets.json configuration like that:
+
+``` JSON
+{
+    "EmailSmtpSender": {
+        "Host": "smtp.gmail.com",
+        "Port": 587,
+        "EnableSSL": true,
+        "UserName": "yourEmailAddress",
+        "Password": "yourEmailPassword"
+    }
+}
+```
+
+The configuration below is used on `ConfigureServices` method in `Startup` class:
+
+``` C#
+services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfiguration());
+```
+
+In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml.cs) class is showed an example that uses `SignIn` options to send account confirmation email.
+
+>Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The EmailConfirmed flag in the AspNetUsers table must be changed to the value = 1.
+
 ## Authors
 
 * **Stenio Nobres** - [Github](https://github.com/stenionobres)
