@@ -152,7 +152,7 @@ services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfigurat
 
 In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml.cs) class is showed an example that uses `SignIn` options to send account confirmation email.
 
->Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The EmailConfirmed flag in the AspNetUsers table must be changed to the value = 1.
+>Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The **EmailConfirmed flag in the AspNetUsers table** must be changed to the value = 1.
 
 ## Authors
 
