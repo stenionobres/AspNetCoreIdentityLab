@@ -20,6 +20,7 @@ After the case studies, the main conclusions were documented in this file and se
 * Identity Basic Configuration 
     * IdentityOptions
 * Entity Framework x Another persistence
+* [Registering a user](#registering-a-user)
 * Logging
 * Fast tips
 * Lessons learned
@@ -74,6 +75,42 @@ Below are listed which requirements the solution meets:
 >**Authentication:** The process that answer the question, Who are you in the application?
 
 >**Authorization:** The process that answer the question, What can you do in the application?
+
+## Registering an user
+
+To register an user on Asp Net Core Identity the `UserManager` class instance with `CreateAsync` method must be used. 
+
+``` C#
+var user = new User { UserName = "Username", Email = "Email" };
+var result = await _userManager.CreateAsync(user, "Password");
+if (result.Succeeded)
+{
+
+}
+```
+
+The username field can be filled with an email or alphanumeric username, example: username@email.com or exampleofusername. **However the use of an email as username is most recommended**. The purpose of an email as username is to facilitate password recover.
+
+### How to customize user atributes?
+
+Asp Net Core Identity provides resources to customize user atributes. For this, the user model must be extended. The example below shows an `Occupation` custom field:
+
+``` C#
+public class User : IdentityUser<int>
+{
+    public string Occupation { get; set; }
+}
+```
+
+The `Occupation` field is added to default user fields showed in [Identity Default Database Model](#identity-default-database-model). For apply the custom field a migration must be created and applied in database.
+
+### Custom register rules
+
+In many cases is necessary add custom rules to be applied on user register. These rules change from business to business. 
+
+To add custom rules the `IUserValidator<TUser>` interface must be used. An example is showed on [CustomUserValidator](./AspNetCoreIdentityLab.Application/IdentityValidators/CustomUserValidator.cs) class. This examples shows a rule that username must be at least 6 characters.
+
+The custom rule is configured on `ConfigureServices` method in [Startup](./AspNetCoreIdentityLab.Application/Startup.cs) class.
 
 ## Authors
 
