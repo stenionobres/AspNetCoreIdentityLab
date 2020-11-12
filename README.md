@@ -19,8 +19,8 @@ After the case studies, the main conclusions were documented in this file and se
     * [AspNetCoreIdentityLab-Application](#AspNetCoreIdentityLab-Application)
     * [AspNetCoreIdentityLab-Persistence](#AspNetCoreIdentityLab-Persistence)
 * [Authentication x Authorization](#authentication-x-authorization)
-* Identity Basic Configuration 
-    * IdentityOptions
+* [Identity Basic Configuration](#identity-basic-configuration) 
+    * [IdentityOptions](#IdentityOptions)
 * Entity Framework x Another persistence
 * [Registering an user](#registering-an-user)
     * [How to customize user atributes?](#how-to-customize-user-atributes?)
@@ -147,6 +147,24 @@ The main namespaces are: `DataTransferObjects`, `EntityFrameworkContexts` and `M
 >**Authentication:** The process that answer the question, Who are you in the application?
 
 >**Authorization:** The process that answer the question, What can you do in the application?
+
+## Identity Basic Configuration 
+
+### IdentityOptions
+
+Represents the options that you can use to configure Asp Net Core Identity.
+
+**User**
+* `AllowedUserNameCharacters`: configures a set of characteres that can be used on username creation. Default value: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+;
+* `RequireUniqueEmail`: sets if a unique email should be informed by user on account creation. Default value: false;
+
+**Password**
+* `RequiredLength`: sets minimum length for password. Default value: 6;
+* `RequiredUniqueChars`: sets the minimum number of unique characters must be used on password. Default value: 1;
+* `RequireNonAlphanumeric`: sets if especial characteres must be used on password. Default value: true;
+* `RequireLowercase`: sets if lowercase characteres must be used on password. Default value: true;
+* `RequireUppercase`: sets if uppercase characteres must be used on password. Default value: true;
+* `RequireDigit`: sets if numeric characteres must be used on password. Default value: true;
 
 ## Registering an user
 
