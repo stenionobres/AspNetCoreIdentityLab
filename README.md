@@ -154,6 +154,12 @@ The main namespaces are: `DataTransferObjects`, `EntityFrameworkContexts` and `M
 
 Represents the options that you can use to configure Asp Net Core Identity.
 
+**ClaimsIdentity**
+* `RoleClaimType`: sets the ClaimType used for a Role claim;
+* `UserNameClaimType`: sets the ClaimType used for the user name claim;
+* `UserIdClaimType`: sets the ClaimType used for the user identifier claim;
+* `SecurityStampClaimType`: sets the ClaimType used for the security stamp claim;
+
 **User**
 * `AllowedUserNameCharacters`: configures a set of characteres that can be used on username creation. Default value: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+;
 * `RequireUniqueEmail`: sets if a unique email should be informed by user on account creation. Default value: false;
@@ -165,6 +171,29 @@ Represents the options that you can use to configure Asp Net Core Identity.
 * `RequireLowercase`: sets if lowercase characteres must be used on password. Default value: true;
 * `RequireUppercase`: sets if uppercase characteres must be used on password. Default value: true;
 * `RequireDigit`: sets if numeric characteres must be used on password. Default value: true;
+
+**Lockout**
+* `AllowedForNewUsers`: sets if a new user can be locked out. Default value: true;
+* `MaxFailedAccessAttempts`: sets the number of failed access attempts allowed before a user is locked. Default value: 5;
+* `DefaultLockoutTimeSpan`: sets the TimeSpan a user is locked out for when a lockout occurs. Default value: 5 minutes;
+
+**SignIn**
+* `RequireConfirmedEmail`: sets if a confirmed email is required to sign in. Default value: false;
+* `RequireConfirmedPhoneNumber`: sets if a confirmed phone number is required to sign in. Default value: false;
+* `RequireConfirmedAccount`: sets if a confirmed account is required to sign in. Default value: false;
+
+**Tokens**
+* `ProviderMap`:
+* `EmailConfirmationTokenProvider`:
+* `PasswordResetTokenProvider`:
+* `ChangeEmailTokenProvider`:
+* `ChangePhoneNumberTokenProvider`:
+* `AuthenticatorTokenProvider`:
+* `AuthenticatorIssuer`:
+
+**Stores**
+* `MaxLengthForKeys`: if set to a positive number, configures the length used on OnModelCreating to set the max length for any properties used as keys, like UserId;
+* `ProtectPersonalData`: sets if the all personally identifying data for a user must protected;
 
 ## Registering an user
 
