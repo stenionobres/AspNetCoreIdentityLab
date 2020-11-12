@@ -11,7 +11,7 @@ After the case studies, the main conclusions were documented in this file and se
 ## Table of contents
 
 * [Prerequisites](#prerequisites)
-* Getting Started
+* [Getting Started](#getting-started)
 * [Project Requirements](#project-requirements)
 * [Identity Default Database Model](#identity-default-database-model)
 * [Project Structure](#project-structure)
@@ -39,6 +39,15 @@ What needs to be installed on the machine to extend and debug the project:
     Visual Studio Community 2019;
     Net Core SDK 3.1;
     SQL Server
+
+## Getting Started
+
+* Install and/or configure all the prerequisites mentioned above;
+* Clone the repository on the local machine;
+* Create the databases used in the application: AspNetCoreIdentityLab;
+* Download Nuget dependencies for the solution in Visual Studio;
+* Run the migrations to the desired database with the command: Update-Database -Context [ClassName of context];
+* Execute the AspNetCoreIdentityLab.Application MVC project;
 
 ## Project Requirements
 
