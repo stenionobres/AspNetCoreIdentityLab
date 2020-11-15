@@ -21,6 +21,8 @@ After the case studies, the main conclusions were documented in this file and se
 * [Authentication x Authorization](#authentication-x-authorization)
 * [Identity Basic Configuration](#identity-basic-configuration) 
     * [IdentityOptions](#IdentityOptions)
+    * [Add Identity to new project](#add-identity-to-new-project)
+    * [Add Identity to existing MVC project](#add-identity-to-existing-mvc-project)
 * Entity Framework x Another persistence
 * [Registering an user](#registering-an-user)
     * [How to customize user atributes?](#how-to-customize-user-atributes?)
