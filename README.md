@@ -195,6 +195,79 @@ Represents the options that you can use to configure Asp Net Core Identity.
 * `MaxLengthForKeys`: if set to a positive number, configures the length used on OnModelCreating to set the max length for any properties used as keys, like UserId;
 * `ProtectPersonalData`: sets if the all personally identifying data for a user must protected;
 
+### Add Identity to new project
+
+To use Asp Net Core Identity in a new project some settings need to be made during and after creating the project.
+
+An **Asp Net Core Web Application** project need to be created with the image options:
+
+![image info](./readme-pictures/aspnet-core-webmvc-identityproject.jpg)
+
+After that the database connection string need be changed in `appsettings.json` and the migrations executed with `Update-Database` command. 
+
+However the author **recommends separate the database access logic from application logic**. The objective is better organize the solution aplying the [SRP principle](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html).
+
+For this a data access project need to be created and the application project with Identity must use this data access layer.
+
+To use a separeted data access project it's necessary add a [project of class library type](./AspNetCoreIdentityLab.Persistence). This project will do access on database and contains the Entity Framework dependencies or another persistence as well.
+
+The solution in this repository uses a separated data access project so it is a good example to use. However to simplify the solution configuration some steps are listed below:
+
+* Remove **ApplicationDbContext** from Asp Net Core MVC project;
+* Remove **Migrations** folder from Asp Net Core MVC project;
+* Remove **Data** folder from Asp Net Core MVC project;
+* Remove **Connection Strings** from `appsettings.json` file;
+* Add **Data Access** class library project and your [dependencies](#used-packages) to solution;
+* Add **Project Reference** to persistence project created above on Asp Net Core MVC project;
+* Change **DbContext configuration** on `ConfigureServices` in `Startup.cs` class to use persistence project DbContext; 
+* Add **User model** inheriting of Asp Net Core `IdentityUser` class**;
+* Run Add-Migration command to create Identity migration;
+* Run Update-Database to create [Identity database structure](#identity-default-database-model);
+
+** It's possible change the keys types on User and IdentityRole models. This is useful to change the database type for this fields. Below is showed examples with User and IdentityRole models with int keys.
+
+``` C#
+public class User : IdentityUser<int>
+{
+    
+}
+
+public class AspNetCoreIdentityLabDbContext : IdentityDbContext<User, IdentityRole<int>, int>
+{
+    private const string ConnectionString = "";
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (optionsBuilder.IsConfigured) return;
+
+        optionsBuilder.UseSqlServer(ConnectionString);
+    }
+}
+```
+
+How was said the [AspNetCoreIdentityLab.Persistence](./AspNetCoreIdentityLab.Persistence) project in this repository is a good example to follow;
+
+### Add Identity to existing MVC project
+
+* Add [Asp Net Core Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity) to project;
+* Add [Asp Net Core Identity Entity Framework Core](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore) to project;
+* Add [Entity Framework Core SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer) to project;
+* Add [Entity Framework Core Tools](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools) to project;
+* Add [User model](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/User.cs) to project;
+* Add [DbContext](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/AspNetCoreIdentityLabDbContext.cs) to project;
+* Add code below in `ConfigureServices` method in `Startup.cs` class;
+``` C#
+services.AddDefaultIdentity<YourUserModel>()
+        .AddEntityFrameworkStores<YourDbContext>()
+        .AddDefaultTokenProviders();
+```
+* Add code below in `Configure` method in `Startup.cs` class;
+``` C#
+app.UseAuthentication();
+```
+* Run Add-Migration command to create Identity migration;
+* Run Update-Database to create [Identity database structure](#identity-default-database-model);
+
 ## Registering an user
 
 To register an user on Asp Net Core Identity the `UserManager` class instance with `CreateAsync` method must be used. 
