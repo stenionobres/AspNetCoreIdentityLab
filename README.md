@@ -373,7 +373,7 @@ public class AboutModel : PageModel
 }
 ```
 
-In the [appsettings.json](./appsettings.json) file is possible to configure the logging options. By default the logging is presented on **Output** tab on Visual Studio.
+In the [appsettings.json](./AspNetCoreIdentityLab.Application/appsettings.json) file is possible to configure the logging options. By default the logging is presented on **Output** tab on Visual Studio.
 
 ![image info](./readme-pictures/identityproject-logging.jpg)
 
