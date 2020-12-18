@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using AspNetCoreIdentityLab.Application.Services;
 
 namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
 {
@@ -21,14 +19,17 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly GoogleRecaptchaService _recaptchaService;
 
         public LoginModel(SignInManager<User> signInManager, 
-            ILogger<LoginModel> logger,
-            UserManager<User> userManager)
+                          ILogger<LoginModel> logger,
+                          UserManager<User> userManager,
+                          GoogleRecaptchaService recaptchaService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _recaptchaService = recaptchaService;
         }
 
         [BindProperty]
@@ -74,6 +75,16 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            var remoteIpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            var recaptchaResponse = Request.Form["g-recaptcha-response"];
+
+            var recaptchaIsValid = await _recaptchaService.recaptchaIsValid(remoteIpAddress, recaptchaResponse);
+
+            if (recaptchaIsValid == false)
+            {
+                ModelState.AddModelError(string.Empty, "There was an unexpected problem on validate reCAPTCHA. Please try again.");
+            }
+
             returnUrl = returnUrl ?? Url.Content("~/");
 
             if (ModelState.IsValid)

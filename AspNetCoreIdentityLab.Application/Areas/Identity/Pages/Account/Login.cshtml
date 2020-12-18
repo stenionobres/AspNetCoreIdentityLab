@@ -1,11 +1,13 @@
 ﻿@page
 @model LoginModel
+@using Microsoft.Extensions.Configuration
 
 @{
     ViewData["Title"] = "Log in";
 }
 
 @inject UserManager<User> UserManager
+@inject IConfiguration configuration
 
 <h1>@ViewData["Title"]</h1>
 <div class="row">
@@ -40,6 +42,9 @@
                         </label>
                     </div>
                 </div>
+
+                <div class="g-recaptcha" data-sitekey="@configuration["reCAPTCHA:SiteKey"]"></div>
+
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Log in</button>
                 </div>
@@ -88,4 +93,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 }

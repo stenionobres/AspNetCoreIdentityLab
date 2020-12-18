@@ -10,6 +10,7 @@ using AspNetCoreIdentityLab.Application.IdentityValidators;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using AspNetCoreIdentityLab.Application.EmailSenders;
 using System;
+using AspNetCoreIdentityLab.Application.Services;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -38,7 +39,10 @@ namespace AspNetCoreIdentityLab.Application
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            services.AddHttpClient();
+
             services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfiguration());
+            services.AddTransient<GoogleRecaptchaService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
