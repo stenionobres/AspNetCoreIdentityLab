@@ -28,7 +28,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [How to customize user atributes?](#how-to-customize-user-atributes?)
     * [Custom register rules](#custom-register-rules)
     * [Account confirmation by email](#account-confirmation-by-email)
-* Logging
+* [Logging](#logging)
 * Fast tips
 * Lessons learned
 * References used
@@ -347,6 +347,37 @@ services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfigurat
 In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml.cs) class is showed an example that uses `SignIn` options to send account confirmation email.
 
 >Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The **EmailConfirmed flag in the AspNetUsers table** must be changed to the value = 1.
+
+## Logging
+
+To register a log the Asp Net Core logging API should be used. This is possible using the `ILogger` interface.
+
+The code below shows how to create a ILogger instance with the dependence injection mechanism:
+
+``` C#
+public class AboutModel : PageModel
+{
+    private readonly ILogger _logger;
+
+    public AboutModel(ILogger<AboutModel> logger)
+    {
+        _logger = logger;
+    }
+    public string Message { get; set; }
+
+    public void OnGet()
+    {
+        Message = $"About page visited at {DateTime.UtcNow.ToLongTimeString()}";
+        _logger.LogInformation(Message);
+    }
+}
+```
+
+In the [appsettings.json](./appsettings.json) file is possible to configure the logging options. By default the logging is presented on **Output** tab on Visual Studio.
+
+![image info](./readme-pictures/identityproject-logging.jpg)
+
+For more information please see the [documentation](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1).
 
 ## Authors
 
