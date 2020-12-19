@@ -5,6 +5,14 @@
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
+<style>
+    #qrCode{
+        text-align: -webkit-center;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+</style>
+
 <partial name="_StatusMessage" for="StatusMessage" />
 <h4>@ViewData["Title"]</h4>
 <div>
@@ -50,4 +58,17 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript" src="~/lib/qrcode.js"></script>
+    <script type="text/javascript">
+        new QRCode(document.getElementById("qrCode"),
+            {
+                text: "@Html.Raw(Model.AuthenticatorUri)",
+                width: 150,
+                height: 150,
+                colorDark: "#000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+    </script>
 }
