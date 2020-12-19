@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using AspNetCoreIdentityLab.Application.EmailSenders;
 using System;
 using AspNetCoreIdentityLab.Application.Services;
+using AspNetCoreIdentityLab.Application.Custom;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -29,6 +30,7 @@ namespace AspNetCoreIdentityLab.Application
             services.AddDbContext<AspNetCoreIdentityLabDbContext>();
             
             services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
+                    .AddUserManager<UserManager>()
                     .AddUserValidator<CustomUserValidator>()
                     .AddPasswordValidator<CustomPasswordValidator>()
                     .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
