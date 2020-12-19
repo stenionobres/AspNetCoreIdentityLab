@@ -28,6 +28,8 @@ After the case studies, the main conclusions were documented in this file and se
     * [How to customize user atributes?](#how-to-customize-user-atributes?)
     * [Custom register rules](#custom-register-rules)
     * [Account confirmation by email](#account-confirmation-by-email)
+* [Authenticating a user](#authenticating-a-user)
+    * [Google reCaptcha](#google-recaptcha)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -347,6 +349,47 @@ services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfigurat
 In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml.cs) class is showed an example that uses `SignIn` options to send account confirmation email.
 
 >Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The **EmailConfirmed flag in the AspNetUsers table** must be changed to the value = 1.
+
+## Authenticating an user
+
+### Google reCaptcha
+
+It's possible to use the **Google reCaptcha** in a Asp Net Core Identity form login. For this it's necessary to get the Google api keys and configure the reCaptcha in Google account.
+
+First, you need to get the api keys filling this [form](https://www.google.com/recaptcha/admin/create). Select the `reCAPTCHA v2` option and add the `locahost` term in domain section. This is useful for tests in development mode.
+
+After, accept the terms and save the data you will get the `SiteKey` and `SecretKey`. The source code uses a secrets.json configuration like that:
+
+``` JSON
+{
+    "reCAPTCHA": {
+        "SiteKey": "",
+        "SecretKey": ""
+    }
+}
+```
+
+A similar secrets.json configuration was made on [Account confirmation by email](#account-confirmation-by-email).
+
+The reCaptcha configuration was made adding the html and javascript code below on [Login.cshtml](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml).
+
+``` html
+<div class="g-recaptcha" data-sitekey="@configuration["reCAPTCHA:SiteKey"]"></div>
+```
+
+``` javascript
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+```
+
+The call to Google API is made by the [GoogleRecaptchaService](./AspNetCoreIdentityLab.Application/Services/GoogleRecaptchaService.cs) class. For use the GoogleRecaptchaService class and httpClient feature is necessary add the code below on `Startup.cs`.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddHttpClient();
+    services.AddTransient<GoogleRecaptchaService>();
+}
+```
 
 ## Logging
 
