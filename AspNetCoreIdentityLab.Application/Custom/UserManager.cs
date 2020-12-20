@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using AspNetCoreIdentityLab.Application.Tools;
 using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
+using System.Linq;
 
 namespace AspNetCoreIdentityLab.Application.Custom
 {
@@ -63,6 +64,38 @@ namespace AspNetCoreIdentityLab.Application.Custom
                                            : databaseKey;
 
             return originalAuthenticatorKey;
+        }
+
+        protected override string CreateTwoFactorRecoveryCode()
+        {
+            var originalRecoveryCode = base.CreateTwoFactorRecoveryCode();
+
+            var encryptedRecoveryCode = EncryptionEnabled
+                                        ? new AesEncryptor(EncryptionKey).Encrypt(originalRecoveryCode)
+                                        : originalRecoveryCode;
+
+            return encryptedRecoveryCode;
+        }
+
+        public override async Task<IEnumerable<string>> GenerateNewTwoFactorRecoveryCodesAsync(User user, int number)
+        {
+            var tokens = await base.GenerateNewTwoFactorRecoveryCodesAsync(user, number);
+
+            var generatedTokens = EncryptionEnabled
+                                  ? tokens.Select(token => new AesEncryptor(EncryptionKey).Decrypt(token))
+                                  : tokens;
+
+            return generatedTokens;
+        }
+
+        public override Task<IdentityResult> RedeemTwoFactorRecoveryCodeAsync(User user, string code)
+        {
+            if (EncryptionEnabled && !string.IsNullOrEmpty(code))
+            {
+                code = new AesEncryptor(EncryptionKey).Encrypt(code);
+            }
+
+            return base.RedeemTwoFactorRecoveryCodeAsync(user, code);
         }
     }
 }
