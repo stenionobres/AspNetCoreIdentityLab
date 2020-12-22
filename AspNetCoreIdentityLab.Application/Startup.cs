@@ -90,8 +90,8 @@ namespace AspNetCoreIdentityLab.Application
             identityOptions.Password.RequiredLength = 6;
             identityOptions.Password.RequiredUniqueChars = 1;
 
-            identityOptions.SignIn.RequireConfirmedAccount = true;
-            identityOptions.SignIn.RequireConfirmedEmail = true;
+            identityOptions.SignIn.RequireConfirmedAccount = false;
+            identityOptions.SignIn.RequireConfirmedEmail = false;
         }
 
         private EmailSmtpSender GetEmailConfiguration()
