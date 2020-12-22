@@ -12,6 +12,7 @@ using AspNetCoreIdentityLab.Application.EmailSenders;
 using System;
 using AspNetCoreIdentityLab.Application.Services;
 using AspNetCoreIdentityLab.Application.Custom;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -42,6 +43,8 @@ namespace AspNetCoreIdentityLab.Application
             services.AddRazorPages();
 
             services.AddHttpClient();
+
+            services.AddAuthentication().AddFacebook(facebookOptions => GetFacebookOptions(facebookOptions));
 
             services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfiguration());
             services.AddTransient<GoogleRecaptchaService>();
@@ -101,6 +104,11 @@ namespace AspNetCoreIdentityLab.Application
                 Configuration["EmailSmtpSender:Password"]
             );
         }
-        
+
+        private void GetFacebookOptions(FacebookOptions facebookOptions)
+        {
+            facebookOptions.AppId = Configuration["SocialNetworkAuthentication:Facebook:AppId"];
+            facebookOptions.AppSecret = Configuration["SocialNetworkAuthentication:Facebook:AppSecret"];
+        }
     }
 }
