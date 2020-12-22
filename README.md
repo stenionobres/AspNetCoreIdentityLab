@@ -327,7 +327,7 @@ The SMTP credentials was saved using [Secret Manager tool](https://docs.microsof
 
 ![image info](./readme-pictures/manage-user-secrets.jpg)
 
-The source code uses a usersecrets.json configuration like that:
+The source code uses a `secrets.json` configuration like that:
 
 ``` JSON
 {
