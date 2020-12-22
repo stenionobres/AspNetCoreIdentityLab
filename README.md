@@ -30,6 +30,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Account confirmation by email](#account-confirmation-by-email)
 * [Authenticating a user](#authenticating-a-user)
     * [Google reCaptcha](#google-recaptcha)
+    * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -388,6 +389,66 @@ public void ConfigureServices(IServiceCollection services)
 {
     services.AddHttpClient();
     services.AddTransient<GoogleRecaptchaService>();
+}
+```
+
+### Two-factor authentication 2FA
+
+Two-factor authentication (2FA) is an electronic authentication method in which a computer user is granted access to a website or application only after successfully presenting two or more pieces of evidence (or factors) to an authentication mechanism: knowledge (something only the user knows), possession (something only the user has), and inherence (something only the user is). (Wikipedia)
+
+Some apps can be used to generate a token that can be used on authentication like: [Authy](https://authy.com/), [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2) and [Microsoft Authenticator](https://www.microsoft.com/en-us/account/authenticator).
+
+The scaffolded razor pages that can be used on project for 2FA are showed below:
+
+![image info](./readme-pictures/2fa-identity-pages.jpg)
+
+These pages are useful to customize the default code or to provide some examples of how to use Asp.Net Core Identity resources.
+
+The page [EnableAuthenticator](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Manage/EnableAuthenticator.cshtml) provides the token to be inserted on two factor authenticator app. However, an important feature don't exists by default that is the Qrcode to be scanned by app.
+
+To provide the QRCode feature, [QRCode.js](https://davidshimjs.github.io/qrcodejs/) lib was added to the project and used on the EnableAuthenticator page.
+
+The path to access the registration token is click over the user email on the top page > Two-factor authentication menu > Setup authenticator app. 
+
+![image info](./readme-pictures/2fa-configure-page.jpg)
+
+So, the user can scan the QrCode or insert the token in the 2FA app.
+
+When the user put the token on 2FA app and completes the register process some tokens are saved on database in the **AspNetUserTokens** table. These tokens are **AuthenticatorKey** and **RecoveryCodes**.
+
+Below are showed some examples of these tokens:
+
+![image info](./readme-pictures/2fa-tokens.png)
+
+The user is probably up to date with 2FA, but security can be improved by encrypting tokens stored in the database.
+
+For that the [AesEncryptor](./AspNetCoreIdentityLab.Application/Tools/AesEncryptor.cs) class is used. This class was developed using the AES algorithm. To encrypt tokens it's necessary override some **UserManager** class methods. A new [UserManager](./AspNetCoreIdentityLab.Application/Custom/UserManager.cs) class was created that inherits from original UserManager class and some methods have been overridden.
+
+Below are showed some examples of encrypted tokens:
+
+![image info](./readme-pictures/2fa-encrypted-tokens.png)
+
+It's necessary register the new UserManager on `Startup.cs` class. The use of `AddUserManager` method on `ConfigureServices`, as showed int the code below, allows the use of new UserManager class. 
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
+            .AddUserManager<UserManager>()
+            .AddUserValidator<CustomUserValidator>()
+            .AddPasswordValidator<CustomPasswordValidator>()
+            .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
+}
+```
+
+The [UserManager](./AspNetCoreIdentityLab.Application/Custom/UserManager.cs) class uses a configuration to knows if cryptography is enabled and the encryption key that should be used. Below is showed a configuration that should be added on `secrets.json` file. The author recommends that `EncryptionEnabled` configuration always be true and `EncryptionKey` should be any string value.
+
+``` JSON
+{
+    "TwoFactorAuthentication": {
+        "EncryptionEnabled": true,
+        "EncryptionKey": "b14ca5898a4e413315a1916"
+    }
 }
 ```
 
