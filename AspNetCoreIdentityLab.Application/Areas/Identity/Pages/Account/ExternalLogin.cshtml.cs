@@ -132,6 +132,11 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
                     {
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
+                        foreach (var token in info.AuthenticationTokens)
+                        {
+                            await _userManager.SetAuthenticationTokenAsync(user, info.LoginProvider, token.Name, token.Value);
+                        }
+
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

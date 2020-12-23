@@ -109,6 +109,7 @@ namespace AspNetCoreIdentityLab.Application
         {
             facebookOptions.AppId = Configuration["SocialNetworkAuthentication:Facebook:AppId"];
             facebookOptions.AppSecret = Configuration["SocialNetworkAuthentication:Facebook:AppSecret"];
+            facebookOptions.SaveTokens = true;
         }
     }
 }
