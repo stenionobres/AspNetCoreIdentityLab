@@ -13,6 +13,7 @@ using System;
 using AspNetCoreIdentityLab.Application.Services;
 using AspNetCoreIdentityLab.Application.Custom;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -44,7 +45,9 @@ namespace AspNetCoreIdentityLab.Application
 
             services.AddHttpClient();
 
-            services.AddAuthentication().AddFacebook(facebookOptions => GetFacebookOptions(facebookOptions));
+            services.AddAuthentication()
+                    .AddFacebook(facebookOptions => GetFacebookOptions(facebookOptions))
+                    .AddGoogle(googleOptions => GetGoogleOptions(googleOptions));
 
             services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfiguration());
             services.AddTransient<GoogleRecaptchaService>();
@@ -110,6 +113,13 @@ namespace AspNetCoreIdentityLab.Application
             facebookOptions.AppId = Configuration["SocialNetworkAuthentication:Facebook:AppId"];
             facebookOptions.AppSecret = Configuration["SocialNetworkAuthentication:Facebook:AppSecret"];
             facebookOptions.SaveTokens = true;
+        }
+
+        private void GetGoogleOptions(GoogleOptions googleOptions)
+        {
+            googleOptions.ClientId = Configuration["SocialNetworkAuthentication:Google:ClientId"];
+            googleOptions.ClientSecret = Configuration["SocialNetworkAuthentication:Google:ClientSecret"];
+            googleOptions.SaveTokens = true;
         }
     }
 }
