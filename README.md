@@ -31,6 +31,7 @@ After the case studies, the main conclusions were documented in this file and se
 * [Authenticating a user](#authenticating-a-user)
     * [Google reCaptcha](#google-recaptcha)
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
+    * [Authentication with external providers](#authentication-with-external-providers)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -132,6 +133,10 @@ The solution `AspNetCoreIdentityLab` is divided into two projects: `AspNetCoreId
 >[Microsoft.EntityFrameworkCore.Tools 3.1.7](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools/3.1.7)
 
 >[Microsoft.Extensions.Logging.Console 3.1.7](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Console/3.1.7)
+
+>[Microsoft.AspNetCore.Authentication.Facebook 3.1.10](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Facebook/3.1.10)
+
+>[Microsoft.AspNetCore.Authentication.Google 3.1.10](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google/3.1.10)
 
 ### AspNetCoreIdentityLab-Application
 
@@ -449,6 +454,108 @@ The [UserManager](./AspNetCoreIdentityLab.Application/Custom/UserManager.cs) cla
         "EncryptionEnabled": true,
         "EncryptionKey": "b14ca5898a4e413315a1916"
     }
+}
+```
+
+### Authentication with external providers
+
+This section demonstrates how to build users to sign-in using OAuth 2.0 with credentials from external authentication providers.
+
+These sign-in with external providers are very convenient to users and shifts many of the complexities of managing the sign-in process onto a third party. 
+
+So many social networks and companies has authentication providers. The mainly are: [Facebook](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Facebook), [Google](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google), [Microsoft](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.MicrosoftAccount/) and [Twitter](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Twitter). 
+
+>Another social authentication providers are listed in this [page](https://github.com/aspnet-contrib/AspNet.Security.OAuth.Providers).
+
+The scaffolded razor pages that can be used on project for sign-in with external providers are showed below:
+
+![image info](./readme-pictures/external-providers-identity-pages.jpg)
+
+For examples, authentication using Facebook and Google providers will be presented:
+
+* Facebook
+
+To configure the use of the Facebook external provider you need add the nuget package on the project. The link is listed on [Used Packages](#used-packages). After that an app needs to be created on [Facebook developers page](https://developers.facebook.com/apps/). This [Microsoft page](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/facebook-logins?view=aspnetcore-3.1) presents a good step by step on how to create the app on Facebook. 
+
+When the app is created on Facebook developers page the **AppId** and **AppSecret** keys are generated and should be inserted on `secrets.json` file of project. Below are presented the configuration used in the project's secrets.json.
+
+``` JSON
+{
+    "SocialNetworkAuthentication": {
+        "Facebook": {
+            "AppId": "",
+            "AppSecret": ""
+        }
+    }
+}
+```
+
+After app creation and secrets.json configuration the `Startup.cs` file should be configured. For this the code below should be added on `ConfigureServices` method on Startup.cs file.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthentication()
+            .AddFacebook(facebookOptions => GetFacebookOptions(facebookOptions));
+}
+
+private void GetFacebookOptions(FacebookOptions facebookOptions)
+{
+    facebookOptions.AppId = Configuration["SocialNetworkAuthentication:Facebook:AppId"];
+    facebookOptions.AppSecret = Configuration["SocialNetworkAuthentication:Facebook:AppSecret"];
+    facebookOptions.SaveTokens = true;
+}
+```
+
+Another important step is save the Facebook tokens generated on authentication. For this the code below was added on `OnPostConfirmationAsync` method of [ExternalLogin.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/ExternalLogin.cshtml.cs) file. The tokens are saved on **AspNetUserTokens** table. If call to `SetAuthenticationTokenAsync` method already exists this step should be ignored.
+
+``` C#
+foreach (var token in info.AuthenticationTokens)
+{
+    await _userManager.SetAuthenticationTokenAsync(user, info.LoginProvider, token.Name, token.Value);
+}
+```
+
+* Google
+
+Just like the Facebook configuration, Google nuget package should be added on project and is listed in [Used Packages](#used-packages) section. After that an app needs to be created on [Google developers page](https://console.developers.google.com/). Two steps should be concluded, add the app and configure the OAuth client as Web Server.
+
+When the app is created on Google developers page the **ClientId** and **ClientSecret** keys are generated and should be inserted on `secrets.json` file of project. Below are presented the configuration used in the project's secrets.json.
+
+``` JSON
+{
+    "SocialNetworkAuthentication": {
+        "Google": {
+            "ClientId": "",
+            "ClientSecret": ""
+        }
+    }
+}
+```
+
+After app creation and secrets.json configuration the `Startup.cs` file should be configured. For this the code below should be added on `ConfigureServices` method on Startup.cs file.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthentication()
+            .AddGoogle(googleOptions => GetGoogleOptions(googleOptions));
+}
+
+private void GetGoogleOptions(GoogleOptions googleOptions)
+{
+    googleOptions.ClientId = Configuration["SocialNetworkAuthentication:Google:ClientId"];
+    googleOptions.ClientSecret = Configuration["SocialNetworkAuthentication:Google:ClientSecret"];
+    googleOptions.SaveTokens = true;
+}
+```
+
+Another important step is save the Google tokens generated on authentication. For this the code below was added on `OnPostConfirmationAsync` method of [ExternalLogin.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/ExternalLogin.cshtml.cs) file. The tokens are saved on **AspNetUserTokens** table. If call to `SetAuthenticationTokenAsync` method already exists this step should be ignored.
+
+``` C#
+foreach (var token in info.AuthenticationTokens)
+{
+    await _userManager.SetAuthenticationTokenAsync(user, info.LoginProvider, token.Name, token.Value);
 }
 ```
 
