@@ -14,6 +14,7 @@ using AspNetCoreIdentityLab.Application.Services;
 using AspNetCoreIdentityLab.Application.Custom;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -36,6 +37,8 @@ namespace AspNetCoreIdentityLab.Application
                     .AddUserValidator<CustomUserValidator>()
                     .AddPasswordValidator<CustomPasswordValidator>()
                     .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
+
+            services.ConfigureApplicationCookie(cookieOptions => GetCookieAuthenticationOptions(cookieOptions));
 
             // Default Identity TokenLifespan value.
             services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromDays(1));
@@ -95,6 +98,15 @@ namespace AspNetCoreIdentityLab.Application
 
             identityOptions.SignIn.RequireConfirmedAccount = false;
             identityOptions.SignIn.RequireConfirmedEmail = false;
+        }
+
+        private void GetCookieAuthenticationOptions(CookieAuthenticationOptions cookieOptions)
+        {
+            var loginExpireTimeInMinutes = Convert.ToDouble(Configuration["LoginExpireTimeInMinutes"]);
+
+            cookieOptions.ExpireTimeSpan = TimeSpan.FromMinutes(loginExpireTimeInMinutes);
+            cookieOptions.LoginPath = "/Identity/Account/Login";
+            cookieOptions.SlidingExpiration = true;
         }
 
         private EmailSmtpSender GetEmailConfiguration()
