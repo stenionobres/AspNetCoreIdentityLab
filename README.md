@@ -29,6 +29,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Custom register rules](#custom-register-rules)
     * [Account confirmation by email](#account-confirmation-by-email)
 * [Authenticating a user](#authenticating-a-user)
+    * [Login session expiration](#login-session-expiration)
     * [Google reCaptcha](#google-recaptcha)
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
     * [Authentication with external providers](#authentication-with-external-providers)
@@ -357,6 +358,34 @@ In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Accou
 >Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The **EmailConfirmed flag in the AspNetUsers table** must be changed to the value = 1.
 
 ## Authenticating an user
+
+### Login session expiration
+
+A feature that improves security in an application is force login session expiration. To implements this a configuration was added on [appsettings.json](./AspNetCoreIdentityLab.Application/appsettings.json) and in [Startup](./AspNetCoreIdentityLab.Application/Startup.cs) class. Below the code is showed:
+
+``` JSON
+{
+  "LoginExpireTimeInMinutes": 3 
+}
+```
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.ConfigureApplicationCookie(cookieOptions => GetCookieAuthenticationOptions(cookieOptions));
+}
+
+private void GetCookieAuthenticationOptions(CookieAuthenticationOptions cookieOptions)
+{
+    var loginExpireTimeInMinutes = Convert.ToDouble(Configuration["LoginExpireTimeInMinutes"]);
+
+    cookieOptions.ExpireTimeSpan = TimeSpan.FromMinutes(loginExpireTimeInMinutes);
+    cookieOptions.LoginPath = "/Identity/Account/Login";
+    cookieOptions.SlidingExpiration = true;
+}
+```
+
+In resume the developer can change the time expiration session of user. The configuration is made in minutes.
 
 ### Google reCaptcha
 
