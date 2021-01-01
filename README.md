@@ -33,6 +33,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Google reCaptcha](#google-recaptcha)
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
     * [Authentication with external providers](#authentication-with-external-providers)
+    * [Identifying same user login from different locations (IPs)](#identifying-same-user-login-from-different-locations-(IPs))
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -587,6 +588,14 @@ foreach (var token in info.AuthenticationTokens)
     await _userManager.SetAuthenticationTokenAsync(user, info.LoginProvider, token.Name, token.Value);
 }
 ```
+
+### Identifying same user login from different locations (IPs)
+
+Some applications blocks or notify same user logins from differents IPs. It's a security rule.
+
+This feature is provided by [UserLoginIp](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/UserLoginIp.cs), [UserLoginIPService](./AspNetCoreIdentityLab.Application/Services/UserLoginIPService.cs) and [UserLoginIPMapper](./AspNetCoreIdentityLab.Persistence/Mappers/UserLoginIPMapper.cs) classes.
+
+Basically the application compares the IP of login with the IP of the last login saved in `UserLoginIp` table. If the IP's are different an email is sent to user.
 
 ## Logging
 
