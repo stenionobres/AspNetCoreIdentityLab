@@ -30,6 +30,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Account confirmation by email](#account-confirmation-by-email)
 * [Authenticating a user](#authenticating-a-user)
     * [Password Rotation](#password-rotation)
+    * [Concurrent login session](#concurrent-login-session)
     * [Login session expiration](#login-session-expiration)
     * [Google reCaptcha](#google-recaptcha)
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
@@ -368,6 +369,14 @@ Password rotation refers to the changing/resetting of a password(s). Limiting th
 The frequency of rotation should vary based on the password age, usage, and security importance. For instance, a password for a standard user account may only require rotation at `60-day intervals`, a process that can be forced through password expiration.
 
 The Asp.Net Core Identity **don't implements Password Rotation by default** at the moment. This [github issue](https://github.com/dotnet/aspnetcore/issues/5716) talks about the subject.
+
+### Concurrent login session
+
+Some applications needs block concurrent login sessions, in other words, the same user can't create more than one login session in the application.
+
+This behavior is hard to be done in the most of applications because for some scenarios is complicated to know if the user turned off the session on client.
+
+At the moment ASP.NET Core Identity don't offers features to avoid concurrent login session directly. However a good feature to avoid concurrent login session is [Two-Factor Authentication](#two-factor-authentication-2FA).
 
 ### Login session expiration
 
