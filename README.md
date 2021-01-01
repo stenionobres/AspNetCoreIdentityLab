@@ -29,6 +29,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Custom register rules](#custom-register-rules)
     * [Account confirmation by email](#account-confirmation-by-email)
 * [Authenticating a user](#authenticating-a-user)
+    * [Password Rotation](#password-rotation)
     * [Login session expiration](#login-session-expiration)
     * [Google reCaptcha](#google-recaptcha)
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
@@ -359,6 +360,14 @@ In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Accou
 >Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The **EmailConfirmed flag in the AspNetUsers table** must be changed to the value = 1.
 
 ## Authenticating an user
+
+### Password Rotation
+
+Password rotation refers to the changing/resetting of a password(s). Limiting the lifespan of a password reduces the risk from and effectiveness of password-based attacks and exploits, by condensing the window of time during which a stolen password may be valid.
+
+The frequency of rotation should vary based on the password age, usage, and security importance. For instance, a password for a standard user account may only require rotation at `60-day intervals`, a process that can be forced through password expiration.
+
+The Asp.Net Core Identity **don't implements Password Rotation by default** at the moment. This [github issue](https://github.com/dotnet/aspnetcore/issues/5716) talks about the subject.
 
 ### Login session expiration
 
