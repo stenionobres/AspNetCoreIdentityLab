@@ -13,6 +13,8 @@ namespace AspNetCoreIdentityLab.Persistence.EntityFrameworkContexts
 
         public static readonly ILoggerFactory LoggerFactoryToConsole = LoggerFactory.Create(builder => builder.AddConsole());
 
+        public DbSet<UserLoginIp> UserLoginIp { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (optionsBuilder.IsConfigured) return;
