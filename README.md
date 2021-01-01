@@ -33,7 +33,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Google reCaptcha](#google-recaptcha)
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
     * [Authentication with external providers](#authentication-with-external-providers)
-    * [Identifying same user login from different locations (IPs)](#identifying-same-user-login-from-different-locations-(IPs))
+    * [Identifying same user login from different locations (IPs)](#identifying-same-user-login-from-different-locations-ips)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
