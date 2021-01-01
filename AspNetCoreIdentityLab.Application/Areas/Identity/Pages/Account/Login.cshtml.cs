@@ -20,16 +20,19 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly GoogleRecaptchaService _recaptchaService;
+        private readonly UserLoginIPService _userLoginIPService;
 
         public LoginModel(SignInManager<User> signInManager, 
                           ILogger<LoginModel> logger,
                           UserManager<User> userManager,
-                          GoogleRecaptchaService recaptchaService)
+                          GoogleRecaptchaService recaptchaService,
+                          UserLoginIPService userLoginIPService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _recaptchaService = recaptchaService;
+            _userLoginIPService = userLoginIPService;
         }
 
         [BindProperty]
@@ -75,10 +78,10 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            var remoteIpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
             var recaptchaResponse = Request.Form["g-recaptcha-response"];
 
-            var recaptchaIsValid = await _recaptchaService.recaptchaIsValid(remoteIpAddress, recaptchaResponse);
+            var recaptchaIsValid = await _recaptchaService.recaptchaIsValid(remoteIpAddress.ToString(), recaptchaResponse);
 
             if (recaptchaIsValid == false)
             {
@@ -94,7 +97,10 @@ namespace AspNetCoreIdentityLab.Application.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.EmailOrUsername, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var user = await _userManager.FindByNameAsync(Input.EmailOrUsername);
                     _logger.LogInformation("User logged in.");
+                    _userLoginIPService.VerifyLoginFromMultipleIPs(user.Id, user.UserName, remoteIpAddress);
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

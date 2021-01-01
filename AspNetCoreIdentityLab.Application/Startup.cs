@@ -15,6 +15,7 @@ using AspNetCoreIdentityLab.Application.Custom;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using AspNetCoreIdentityLab.Persistence.Mappers;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -54,6 +55,8 @@ namespace AspNetCoreIdentityLab.Application
 
             services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfiguration());
             services.AddTransient<GoogleRecaptchaService>();
+            services.AddTransient<UserLoginIPService>();
+            services.AddTransient<UserLoginIPMapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
