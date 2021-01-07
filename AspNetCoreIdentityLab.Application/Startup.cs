@@ -101,6 +101,10 @@ namespace AspNetCoreIdentityLab.Application
 
             identityOptions.SignIn.RequireConfirmedAccount = false;
             identityOptions.SignIn.RequireConfirmedEmail = false;
+
+            identityOptions.Lockout.AllowedForNewUsers = true;
+            identityOptions.Lockout.MaxFailedAccessAttempts = 3;
+            identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
         }
 
         private void GetCookieAuthenticationOptions(CookieAuthenticationOptions cookieOptions)
