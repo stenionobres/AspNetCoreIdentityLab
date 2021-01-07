@@ -32,6 +32,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Password Rotation](#password-rotation)
     * [Concurrent login session](#concurrent-login-session)
     * [Login session expiration](#login-session-expiration)
+    * [User account lockout](#user-account-lockout)
     * [Google reCaptcha](#google-recaptcha)
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
     * [Authentication with external providers](#authentication-with-external-providers)
@@ -405,6 +406,29 @@ private void GetCookieAuthenticationOptions(CookieAuthenticationOptions cookieOp
 ```
 
 In resume the developer can change the time expiration session of user. The configuration is made in minutes.
+
+### User account lockout
+
+A important feature that ASP.NET Core Identity has is **User account lockout**. 
+
+This feature blocks user logins after a number of unsuccessfully tentatives of sign-in. This is a important behavior to avoid [brute force](https://en.wikipedia.org/wiki/Brute-force_attack) attacks, however this feature has a drawback that to facilitate [Denial-of-service](https://en.wikipedia.org/wiki/Denial-of-service_attack) attacks if the attacker has a list of user emails accounts.
+
+To implements that feature some options must be configured on [Startup.cs](./AspNetCoreIdentityLab.Application/Startup.cs) file and the `lockoutOnFailure` parameter should be true on `PasswordSignInAsync` call in the [Login.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml.cs) file. In this example after the third access failed the user will be blocked by 5 minutes. The code snippets are showed below:
+
+``` C#
+private void GetDefaultIdentityOptions(IdentityOptions identityOptions)
+{
+    identityOptions.Lockout.AllowedForNewUsers = true;
+    identityOptions.Lockout.MaxFailedAccessAttempts = 3;
+    identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+}
+```
+
+``` C#
+var result = await _signInManager.PasswordSignInAsync(Input.EmailOrUsername, 
+                                                      Input.Password, Input.RememberMe, 
+                                                      lockoutOnFailure: true);
+```
 
 ### Google reCaptcha
 
