@@ -29,6 +29,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Custom register rules](#custom-register-rules)
     * [Account confirmation by email](#account-confirmation-by-email)
 * [Authenticating a user](#authenticating-a-user)
+    * [Password Hashing](#password-hashing)
     * [Password Rotation](#password-rotation)
     * [Concurrent login session](#concurrent-login-session)
     * [Login session expiration](#login-session-expiration)
@@ -362,6 +363,23 @@ In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Accou
 >Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The **EmailConfirmed flag in the AspNetUsers table** must be changed to the value = 1.
 
 ## Authenticating an user
+
+### Password Hashing
+
+The default password hasher for ASP.NET Core Identity uses **PBKDF2** algorithm. The implementation uses the [ASP.NET Core Data Protection](https://docs.microsoft.com/en-us/aspnet/core/security/data-protection/introduction?view=aspnetcore-3.1) cryptographic API.
+
+The characteristics of the password hasher are as follows:
+
+|                 |                         |
+| :-------------- | :---------------------: | 
+| **Algorithm**   | PBKDF2 with HMAC-SHA256 |
+| **Salt**        | 128-bit                 |
+| **Subkey**      | 256-bit                 |
+| **Iterations**  | 10.000                  |
+
+The Andrew Lock’s [article](https://andrewlock.net/exploring-the-asp-net-core-identity-passwordhasher/) presents more details about default PBKDF2 password hasher.
+
+It's possible change the algorithm used by password hasher. For this check out Scott Brady [Improving the ASP.NET Core Identity Password Hasher](https://www.scottbrady91.com/ASPNET-Identity/Improving-the-ASPNET-Core-Identity-Password-Hasher) article. It's important to say that the change of the default algorithm should be used only if your team has a good knowledge about security and cryptography.
 
 ### Password Rotation
 
