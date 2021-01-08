@@ -199,13 +199,13 @@ Represents the options that you can use to configure Asp Net Core Identity.
 * `RequireConfirmedAccount`: sets if a confirmed account is required to sign in. Default value: false;
 
 **Tokens**
-* `ProviderMap`:
-* `EmailConfirmationTokenProvider`:
-* `PasswordResetTokenProvider`:
-* `ChangeEmailTokenProvider`:
-* `ChangePhoneNumberTokenProvider`:
-* `AuthenticatorTokenProvider`:
-* `AuthenticatorIssuer`:
+* `ProviderMap`: sets the values that will be used to construct UserTokenProviders with the key used as the providerName. Default value: Empty;
+* `EmailConfirmationTokenProvider`: sets the name of the provider used to generate tokens in the user's **confirmation email process**. Default value: Default;
+* `PasswordResetTokenProvider`: sets the name of the provider used to generate tokens in the user's **password change process**. Default value: Default;
+* `ChangeEmailTokenProvider`: sets the name of the provider used to generate tokens in the user's **email change process**. Default value: Default;
+* `ChangePhoneNumberTokenProvider`: sets the name of the provider used to generate tokens in the user's **phone number change process**. Default value: Phone;
+* `AuthenticatorTokenProvider`: sets the name of provider used to **validate 2FA values**. Default value: Authenticator;
+* `AuthenticatorIssuer`: sets the name of the issuer used for the authenticator issuer. Default value: Microsoft.AspNetCore.Identity.UI;
 
 **Stores**
 * `MaxLengthForKeys`: if set to a positive number, configures the length used on OnModelCreating to set the max length for any properties used as keys, like UserId;
