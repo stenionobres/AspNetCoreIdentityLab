@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AspNetCoreIdentityLab.Persistence.Mappers;
+using AspNetCoreIdentityLab.Persistence.IdentityStores;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -31,13 +32,23 @@ namespace AspNetCoreIdentityLab.Application
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var persistenceWithDapper = Convert.ToBoolean(Configuration["PersistenceWithDapper"]);
+            var identityBuilder = services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
+                                          .AddUserManager<UserManager>()
+                                          .AddUserValidator<CustomUserValidator>()
+                                          .AddPasswordValidator<CustomPasswordValidator>();
+
+            if (persistenceWithDapper)
+            {
+                services.AddTransient<IUserStore<User>, UserStoreService>();
+                services.AddTransient<UserStore>();
+            }
+            else
+            {
+                identityBuilder.AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
+            }
+
             services.AddDbContext<AspNetCoreIdentityLabDbContext>();
-            
-            services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
-                    .AddUserManager<UserManager>()
-                    .AddUserValidator<CustomUserValidator>()
-                    .AddPasswordValidator<CustomPasswordValidator>()
-                    .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
 
             services.ConfigureApplicationCookie(cookieOptions => GetCookieAuthenticationOptions(cookieOptions));
 
