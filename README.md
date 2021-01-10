@@ -23,7 +23,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [IdentityOptions](#IdentityOptions)
     * [Add Identity to new project](#add-identity-to-new-project)
     * [Add Identity to existing MVC project](#add-identity-to-existing-mvc-project)
-* Entity Framework x Another persistence
+* [Entity Framework x Another persistence](#entity-framework-x-another-persistence)
 * [Registering an user](#registering-an-user)
     * [How to customize user atributes?](#how-to-customize-user-atributes?)
     * [Custom register rules](#custom-register-rules)
@@ -143,6 +143,8 @@ The solution `AspNetCoreIdentityLab` is divided into two projects: `AspNetCoreId
 >[Microsoft.AspNetCore.Authentication.Facebook 3.1.10](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Facebook/3.1.10)
 
 >[Microsoft.AspNetCore.Authentication.Google 3.1.10](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google/3.1.10)
+
+>[Dapper 2.0.35](https://www.nuget.org/packages/Dapper/2.0.35)
 
 ### AspNetCoreIdentityLab-Application
 
@@ -283,6 +285,22 @@ app.UseAuthentication();
 ```
 * Run Add-Migration command to create Identity migration;
 * Run Update-Database to create [Identity database structure](#identity-default-database-model);
+
+## Entity Framework x Another persistence
+
+The most content about ASP.NET Core Identity recommends the use of [Entity Framework Core](https://github.com/stenionobres/EntityFrameworkCoreLab) how persistence mechanism.
+
+However, it's possible to use another persistence mechanism to manipulate the user's data. For this it's necessary implements some interfaces named with sufix [Store](https://github.com/dotnet/aspnetcore/tree/master/src/Identity/Extensions.Core/src): IUserStore, IUserLoginStore, IUserClaimStore, IUserPasswordStore, IUserSecurityStampStore, IUserEmailStore, IUserLockoutStore, IUserPhoneNumberStore, IQueryableUserStore, IUserTwoFactorStore, IUserAuthenticationTokenStore, IUserAuthenticatorKeyStore, IUserTwoFactorRecoveryCodeStore, IRoleStore, IQueryableRoleStore, IRoleClaimStore. These interfaces are used by **SignInManager** and **UserManager** classes to maniputate the user's data.
+
+To exemplify this feature an implementation using micro-ORM [Dapper](https://github.com/StackExchange/Dapper) was made. But, another persistence mechanism can be used like [ADO.NET](https://docs.microsoft.com/en-US/dotnet/framework/data/adonet/ado-net-code-examples) or [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/).
+
+For this a option named `PersistenceWithDapper` was added on `appsettings.json`, when the value is true the [UserStoreService](./AspNetCoreIdentityLab.Application/Services/UserStoreService.cs) and [UserStore](./AspNetCoreIdentityLab.Persistence/IdentityStores/UserStore.cs) classes are loaded in ASP.NET Core dependency injection.
+
+Based on that the `SignInManager` and `UserManager` classes can to use the new persistence class. It's important to say that `UserStoreService` class don't implements all store interfaces, **only the necessary interfaces for register and login user process**. 
+
+For more details how the original classes are designed in ASP.NET Core Identity the [UserStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/UserStoreBase.cs), [UserStore](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/EntityFrameworkCore/src/UserStore.cs), [RoleStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/RoleStoreBase.cs) and [RoleStore](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/EntityFrameworkCore/src/RoleStore.cs) classes can be verified.
+
+>A way to facilitate the creation of database structure when another persistence mechanism will be used with a relational database is to configure the project with Entity Framework Core, generate the migration, apply the migration with tables and fields on the database and after that remove the EF Core dependency and uses another persistence mechanism as showed above.
 
 ## Registering an user
 
