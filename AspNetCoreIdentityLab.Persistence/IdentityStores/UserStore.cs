@@ -235,6 +235,17 @@ namespace AspNetCoreIdentityLab.Persistence.IdentityStores
             user.NormalizedEmail = normalizedEmail;
             return Task.FromResult(0);
         }
+
+        public Task SetSecurityStampAsync(User user, string stamp, CancellationToken cancellationToken)
+        {
+            user.SecurityStamp = stamp;
+            return Task.FromResult(0);
+        }
+
+        public Task<string> GetSecurityStampAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.SecurityStamp);
+        }
         
     }
 }

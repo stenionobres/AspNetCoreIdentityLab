@@ -6,7 +6,7 @@ using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
 
 namespace AspNetCoreIdentityLab.Application.Services
 {
-    public class UserStoreService : IUserStore<User>, IUserPasswordStore<User>, IUserPhoneNumberStore<User>, IUserEmailStore<User>
+    public class UserStoreService : IUserStore<User>, IUserPasswordStore<User>, IUserPhoneNumberStore<User>, IUserEmailStore<User>, IUserSecurityStampStore<User>
     {
         private readonly UserStore _userStore;
 
@@ -135,10 +135,19 @@ namespace AspNetCoreIdentityLab.Application.Services
             return _userStore.SetNormalizedEmailAsync(user, normalizedEmail, cancellationToken);
         }
 
+        public Task SetSecurityStampAsync(User user, string stamp, CancellationToken cancellationToken)
+        {
+            return _userStore.SetSecurityStampAsync(user, stamp, cancellationToken);
+        }
+
+        public Task<string> GetSecurityStampAsync(User user, CancellationToken cancellationToken)
+        {
+            return _userStore.GetSecurityStampAsync(user, cancellationToken);
+        }
+
         public void Dispose()
         {
 
         }
-
     }
 }
