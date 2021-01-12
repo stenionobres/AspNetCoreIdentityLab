@@ -23,6 +23,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [IdentityOptions](#IdentityOptions)
     * [Add Identity to new project](#add-identity-to-new-project)
     * [Add Identity to existing MVC project](#add-identity-to-existing-mvc-project)
+* [Identity Database Customization](#identity-database-customization)
 * [Entity Framework x Another persistence](#entity-framework-x-another-persistence)
 * [Registering an user](#registering-an-user)
     * [How to customize user atributes?](#how-to-customize-user-atributes?)
@@ -285,6 +286,18 @@ app.UseAuthentication();
 ```
 * Run Add-Migration command to create Identity migration;
 * Run Update-Database to create [Identity database structure](#identity-default-database-model);
+
+## Identity Database Customization
+
+And if developer need to change the tables name? Use another schema name or use a separate database for authentication? How developer should proceed?
+
+It's possible to use the EF Core Fluent API and DBContext's configuration to change the ASP.NET Core Identity default database structure. Things like a different schema name or diferent table names.
+
+For this, custom table names and schema are shown in [this DBContext](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts/AspNetCoreIdentityLabCustomModelDbContext.cs). A [related migration](./AspNetCoreIdentityLab.Persistence/Migrations/AspNetCoreIdentityLabCustomModel/20210112191330_DatabaseInitialStructure.cs) was created for generate a initial database structure.
+
+To use different databases it's possible too. An example is shown in [Authentication API]() and [Authorization API]() that uses different databases with different DBContexts to store the data.
+
+Other information can be founded in this [excellent guide](https://docs.microsoft.com/en-US/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-3.1) to customize ASP.NET Core Identity database. 
 
 ## Entity Framework x Another persistence
 
