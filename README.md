@@ -41,6 +41,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Identifying same user login from different locations (IPs)](#identifying-same-user-login-from-different-locations-ips)
 * [Authorizing a user](#authorizing-a-user)
     * [Claims](#claims)
+    * [Roles](#roles)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -745,6 +746,65 @@ public class VacationController : Controller
 ```
 
 Only users that has the `Occupation` claim defined on HasJob policy can access the VacationController, except by `VacationRules` action that allows all user access. The `RequestDeveloperVacation` action has two policies applied: HasJob and Developers. The `VacationBalance` action respects only HasJob policy.
+
+### Roles
+
+A role is a type of attribute that can be applied to a user. Roles contain a set of permission for doing a set of activities in the application. Example of roles: Admin, Manager and Supervisor. A role can also be seen as a group of users.
+
+The code belows is a good example of how to associate a role to user:
+
+``` C#
+var user = await _userManager.FindByNameAsync("email@example.com");
+var adminRole = new IdentityRole<int>("Admin");
+await _roleManager.CreateAsync(adminRole);
+await _userManager.AddToRoleAsync(user, "Admin");
+```
+
+Roles may have the own claims that can used to more complex authorization rules. The code belows shown how to add a claim to role:
+
+``` C#
+var claim = new Claim(type: "ProfileId", value: "3");
+var adminRole = await _roleManager.FindByNameAsync("Admin");
+await _roleManager.AddClaimAsync(adminRole, claim);
+```
+
+The roles can be used in `Authorize` attribute inside controllers. Multiple roles can be used too.
+
+``` C#
+[Authorize(Roles = "Admin")]
+public class AdministrationController : Controller
+{
+
+}
+
+[Authorize(Roles = "HRManager, Finance")]
+public class SalaryController : Controller
+{
+
+}
+
+[Authorize(Roles = "PowerUser")]
+[Authorize(Roles = "ControlPanelUser")]
+public class ControlPanelController : Controller
+{
+
+}
+```
+
+The configuration above made on `SalaryController` only allows users with HRManager role **OR** Finance role access the controller actions. In addiction the configuration made on `ControlPanelController` only allows users with PowerUser role **AND** ControlPanelUser role access the controller actions. It's important to observe that one configuration represents the OR conector and another represents the AND conector.
+
+Another way to use roles is with policies. Below is showed some examples of how to create policies using roles.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("Administrator", policy => policy.RequireRole("Admin"));
+        options.AddPolicy("TechnicalTeam", policy => policy.RequireRole("PowerUser", "BackupAdministrator", "DBA"));
+    });
+}
+```
 
 ## Logging
 
