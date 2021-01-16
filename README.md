@@ -39,6 +39,8 @@ After the case studies, the main conclusions were documented in this file and se
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
     * [Authentication with external providers](#authentication-with-external-providers)
     * [Identifying same user login from different locations (IPs)](#identifying-same-user-login-from-different-locations-ips)
+* [Authorizing a user](#authorizing-a-user)
+    * [Claims](#claims)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -687,6 +689,62 @@ Some applications blocks or notify same user logins from differents IPs. It's a 
 This feature is provided by [UserLoginIp](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/UserLoginIp.cs), [UserLoginIPService](./AspNetCoreIdentityLab.Application/Services/UserLoginIPService.cs) and [UserLoginIPMapper](./AspNetCoreIdentityLab.Persistence/Mappers/UserLoginIPMapper.cs) classes.
 
 Basically the application compares the IP of login with the IP of the last login saved in `UserLoginIp` table. If the IP's are different an email is sent to user.
+
+## Authorizing a user
+
+### Claims
+
+A claim in general is a name value pair that represents a user attribute. For example: a date of birth or age.
+
+The code belows is a good example of how to associate a claim to user:
+
+``` C#
+var user = await _userManager.FindByNameAsync("email@example.com");
+var ageClaim = new Claim(type: "Age", value: "25");
+await _userManager.AddClaimAsync(user, ageClaim);
+```
+
+Claims based authorization, at its simplest, checks the value of a claim and allows access to a resource based upon that value.
+
+Claims authorization are policy based, the developer must build and register a policy expressing the claims requirements. In this [section](#policies) policies are better detailed however below is shown how to create a basic policy that uses a specific claim.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("HasJob", policy => policy.RequireClaim("Occupation"));
+        options.AddPolicy("Developers", policy => policy.RequireClaim("Occupation", "Software Developer"));
+    });
+}
+```
+
+The policy **HasJob** verifies if the user has the `Occupation` claim and the **Developers** policy verifies if the user has the `Software Developer` value in the Occupation claim. Below is shown how to use these policies:
+
+``` C#
+[Authorize(Policy = "HasJob")]
+public class VacationController : Controller
+{
+    [AllowAnonymous]
+    public ActionResult VacationRules()
+    {
+
+    }
+
+    public ActionResult VacationBalance()
+    {
+
+    }
+
+    [Authorize(Policy = "Developers")]
+    public ActionResult RequestDeveloperVacation()
+    {
+
+    }
+}
+```
+
+Only users that has the `Occupation` claim defined on HasJob policy can access the VacationController, except by `VacationRules` action that allows all user access. The `RequestDeveloperVacation` action has two policies applied: HasJob and Developers. The `VacationBalance` action respects only HasJob policy.
 
 ## Logging
 
