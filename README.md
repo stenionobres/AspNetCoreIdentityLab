@@ -694,6 +694,31 @@ Basically the application compares the IP of login with the IP of the last login
 
 ## Authorizing a user
 
+Authorization is the process that answer the question, **What user can do in the application?** For example an administrative user is allowed to delete a document. However a non-administrative user is only authorized to read the documents.
+
+The process of authorization is independent from authentication so much so that authorizing classes belongs only ASP.NET Core. This permits that these classes can be used without ASP.NET Core Identity. Despite this, the two set of classes are often used together.
+
+Authorization components can be used in the code adding the **AuthorizeAttribute** and **AllowAnonymousAttribute** attributes, like the code below:
+
+``` C#
+[Authorize]
+public class ExampleController : Controller
+{
+    public ActionResult FirstAction()
+    {
+
+    }
+
+    [AllowAnonymous]
+    public ActionResult SecondAction()
+    {
+
+    }
+}
+```
+
+To better understand the authorization configurations the **Claims, Roles and Policies** concepts needed to be defined. These concepts will be presented in the next sections.
+
 ### Claims
 
 A claim in general is a name value pair that represents a user attribute. For example: a date of birth or age.
