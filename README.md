@@ -42,6 +42,7 @@ After the case studies, the main conclusions were documented in this file and se
 * [Authorizing a user](#authorizing-a-user)
     * [Claims](#claims)
     * [Roles](#roles)
+    * [Policies](#policies)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -803,6 +804,110 @@ public void ConfigureServices(IServiceCollection services)
         options.AddPolicy("Administrator", policy => policy.RequireRole("Admin"));
         options.AddPolicy("TechnicalTeam", policy => policy.RequireRole("PowerUser", "BackupAdministrator", "DBA"));
     });
+}
+```
+
+### Policies
+
+A policy is a set of one or more requirements needed in order to authorize a user request to a specific resource. It's possible defined policies based in claims, roles or both.
+
+Below is shown a code that uses claims and roles to define a policy:
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options => {
+        options.AddPolicy("DotNetTeamManager", policy => {
+                policy.RequireRole("Manager");
+                policy.RequireClaim("Skill", "ASP.NET Core");
+        });
+    });
+}
+
+[Authorize(Policy = "DotNetTeamManager")]
+public class TeamController : Controller
+{
+
+}
+```
+
+Sometimes only claims and roles aren't enough to define a policy. In this case is needed to create a **custom policy**. For that is necessary to create a **requirement** and **handler**.
+
+* Requirement: a requirement is a collection of data parameters used by the policy to evaluate the user Identity;
+* Handler: a handler is the responsible of evaluating the properties of the requirements to determine if the user is authorized to access to a specific resource;
+
+To better understand how to create a custom policy the concepts will be detailed based on time experience policy example. 
+
+In the first is necessary create a requirement. A requirement implements `IAuthorizationRequirement` interface.
+
+``` C#
+public class TimeExperienceRequirement : IAuthorizationRequirement
+{
+    public int TimeExperience { get; }
+
+    public TimeExperienceRequirement(int timeExperience)
+    {
+        TimeExperience = timeExperience;
+    }
+}
+```
+
+After that a handler needs to be created. A handler may inherit `AuthorizationHandler<TRequirement>` class, where TRequirement is the requirement to be handled.
+
+``` C#
+public class TimeExperienceHandler : AuthorizationHandler<TimeExperienceRequirement>
+{
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, 
+                                                   TimeExperienceRequirement requirement)
+    {
+        var user = context.User;
+        var timeExperienceClaim = user.FindFirst("TimeExperience");
+
+        if (timeExperienceClaim != null)
+        {
+            var timeExperience = int.Parse(timeExperienceClaim?.Value);
+            if (timeExperience >= requirement.TimeExperience)
+            {
+                context.Succeed(requirement);
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+}
+```
+
+With handler created the registration in the services collection is necessary.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("AtLeastFiveYearsExperience", policy => policy.Requirements.Add(new TimeExperienceRequirement(5)));
+        options.AddPolicy("AtLeastSevenYearsExperience", policy => policy.Requirements.Add(new TimeExperienceRequirement(7)));
+    });
+    services.AddSingleton<IAuthorizationHandler, TimeExperienceHandler>();
+}
+```
+
+So, the policies can be applied on the controllers.
+
+``` C#
+[Authorize(Policy = "AtLeastFiveYearsExperience")]
+public class BackupController : Controller
+{
+
+    public ActionResult GetLastBackup()
+    {
+
+    }
+
+    [Authorize(Policy = "AtLeastSevenYearsExperience")]
+    public ActionResult RebuildIndexes()
+    {
+
+    }
 }
 ```
 
