@@ -34,6 +34,7 @@ namespace AspNetCoreIdentityLab.Application
         {
             var persistenceWithDapper = Convert.ToBoolean(Configuration["PersistenceWithDapper"]);
             var identityBuilder = services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
+                                          .AddRoles<IdentityRole<int>>()
                                           .AddUserManager<UserManager>()
                                           .AddUserValidator<CustomUserValidator>()
                                           .AddPasswordValidator<CustomPasswordValidator>();
