@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
+using AspNetCoreIdentityLab.Persistence.EntityFrameworkContexts;
 
 namespace AspNetCoreIdentityLab.Api
 {
@@ -26,6 +22,8 @@ namespace AspNetCoreIdentityLab.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddIdentity<User, IdentityRole<int>>()
+                    .AddEntityFrameworkStores<AuthenticationDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
