@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreIdentityLab.Persistence", "AspNetCoreIdentityLab.Persistence\AspNetCoreIdentityLab.Persistence.csproj", "{EF2CDD52-186C-43B1-B670-68C7AC3E02AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreIdentityLab.Application", "AspNetCoreIdentityLab.Application\AspNetCoreIdentityLab.Application.csproj", "{83FBC14B-02B7-4D58-8AE4-6C888F1618DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreIdentityLab.Application", "AspNetCoreIdentityLab.Application\AspNetCoreIdentityLab.Application.csproj", "{83FBC14B-02B7-4D58-8AE4-6C888F1618DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreIdentityLab.Api", "AspNetCoreIdentityLab.Api\AspNetCoreIdentityLab.Api.csproj", "{09DE4708-C2A9-4620-898D-108E1D70C3B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{83FBC14B-02B7-4D58-8AE4-6C888F1618DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83FBC14B-02B7-4D58-8AE4-6C888F1618DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83FBC14B-02B7-4D58-8AE4-6C888F1618DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09DE4708-C2A9-4620-898D-108E1D70C3B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09DE4708-C2A9-4620-898D-108E1D70C3B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09DE4708-C2A9-4620-898D-108E1D70C3B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09DE4708-C2A9-4620-898D-108E1D70C3B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
