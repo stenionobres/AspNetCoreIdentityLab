@@ -31,6 +31,8 @@ namespace AspNetCoreIdentityLab.Api
             services.AddIdentity<User, IdentityRole<int>>()
                     .AddEntityFrameworkStores<AuthenticationDbContext>();
 
+            services.AddDbContext<AuthenticationDbContext>();
+
             services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
 
             services.AddAuthentication(authenticationOptions => { GetAuthenticationOptions(authenticationOptions); })
