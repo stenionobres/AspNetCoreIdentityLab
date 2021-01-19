@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using AspNetCoreIdentityLab.Api.Model;
 using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
 using AspNetCoreIdentityLab.Api.Jwt;
+using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace AspNetCoreIdentityLab.Api.Controllers
 {
@@ -56,6 +58,22 @@ namespace AspNetCoreIdentityLab.Api.Controllers
             }
 
             return BadRequest("Email or password incorrect.");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult<IEnumerable<UserModel>> GetAll()
+        {
+            var users = _userManager.Users.Select(u => new UserModel() 
+            { 
+                Id = u.Id,
+                UserName = u.UserName,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                Occupation = u.Occupation
+            }).ToList();
+
+            return Ok(users);
         }
     }
 }
