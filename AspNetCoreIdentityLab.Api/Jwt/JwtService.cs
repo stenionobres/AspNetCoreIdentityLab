@@ -2,27 +2,28 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Configuration;
 
 namespace AspNetCoreIdentityLab.Api.Jwt
 {
     public class JwtService
     {
-        private readonly JwtSettings _jwtSettings;
+        private readonly IConfiguration _configuration;
 
-        public JwtService(JwtSettings jwtSettings)
+        public JwtService(IConfiguration configuration)
         {
-            _jwtSettings = jwtSettings;
+            _configuration = configuration;
         }
 
         public string GenerateToken()
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(_jwtSettings.ExpirationInDays));
+            var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpirationInDays"]));
 
             var token = new JwtSecurityToken(
-                issuer: _jwtSettings.Issuer,
-                audience: _jwtSettings.Issuer,
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Issuer"],
                 expires: expires,
                 signingCredentials: creds
             );

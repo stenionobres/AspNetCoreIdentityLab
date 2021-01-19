@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using AspNetCoreIdentityLab.Api.Model;
 using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
+using AspNetCoreIdentityLab.Api.Jwt;
 
 namespace AspNetCoreIdentityLab.Api.Controllers
 {
@@ -12,10 +13,12 @@ namespace AspNetCoreIdentityLab.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
+        private readonly JwtService _jwtService;
 
-        public UserController(UserManager<User> userManager)
+        public UserController(UserManager<User> userManager, JwtService jwtService)
         {
             _userManager = userManager;
+            _jwtService = jwtService;
         }
 
         [HttpPost]
@@ -33,6 +36,26 @@ namespace AspNetCoreIdentityLab.Api.Controllers
             var errorDetail = result.Errors.First().Description;
 
             return Problem(detail: errorDetail, instance: null, statusCode: 500);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignIn(SignInModel signInModel)
+        {
+            var user = _userManager.Users.FirstOrDefault(u => u.UserName == signInModel.Email);
+            
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var userSignInResult = await _userManager.CheckPasswordAsync(user, signInModel.Password);
+
+            if (userSignInResult)
+            {
+                return Ok(new { Token = _jwtService.GenerateToken() });
+            }
+
+            return BadRequest("Email or password incorrect.");
         }
     }
 }

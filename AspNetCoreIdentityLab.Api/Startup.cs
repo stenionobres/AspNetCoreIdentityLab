@@ -33,10 +33,10 @@ namespace AspNetCoreIdentityLab.Api
 
             services.AddDbContext<AuthenticationDbContext>();
 
-            services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
-
             services.AddAuthentication(authenticationOptions => { GetAuthenticationOptions(authenticationOptions); })
                     .AddJwtBearer(jwtBearerOptions => { GetJwtBearerOptions(jwtBearerOptions); });
+
+            services.AddTransient<JwtService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
