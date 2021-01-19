@@ -19,11 +19,11 @@ namespace AspNetCoreIdentityLab.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp(UserModel userModel)
+        public async Task<IActionResult> SignUp(SignUpModel signUpModel)
         {
-            var user = new User() { UserName = userModel.Email, Email = userModel.Email, Occupation = userModel.Occupation };
+            var user = new User() { UserName = signUpModel.Email, Email = signUpModel.Email, Occupation = signUpModel.Occupation };
 
-            var result = await _userManager.CreateAsync(user, userModel.Password);
+            var result = await _userManager.CreateAsync(user, signUpModel.Password);
 
             if (result.Succeeded)
             {

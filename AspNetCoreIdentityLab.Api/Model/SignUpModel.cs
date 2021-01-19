@@ -1,7 +1,7 @@
 ﻿
 namespace AspNetCoreIdentityLab.Api.Model
 {
-    public class UserModel
+    public class SignUpModel
     {
         public string Email { get; set; }
         public string Occupation { get; set; }
