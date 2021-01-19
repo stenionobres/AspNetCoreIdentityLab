@@ -52,7 +52,7 @@ namespace AspNetCoreIdentityLab.Api.Controllers
 
             if (userSignInResult)
             {
-                return Ok(new { Token = _jwtService.GenerateToken() });
+                return Ok(new { Token = _jwtService.GenerateToken(user) });
             }
 
             return BadRequest("Email or password incorrect.");
