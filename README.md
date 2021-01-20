@@ -25,6 +25,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Add Identity to existing MVC project](#add-identity-to-existing-mvc-project)
 * [Identity Database Customization](#identity-database-customization)
 * [Entity Framework x Another persistence](#entity-framework-x-another-persistence)
+* [SignManager x UserManager x RoleManager](#signmanager-x-usermanager-x-rolemanager)
 * [Registering an user](#registering-an-user)
     * [How to customize user atributes?](#how-to-customize-user-atributes?)
     * [Custom register rules](#custom-register-rules)
@@ -321,6 +322,16 @@ Based on that the `SignInManager` and `UserManager` classes can to use the new p
 For more details how the original classes are designed in ASP.NET Core Identity the [UserStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/UserStoreBase.cs), [UserStore](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/EntityFrameworkCore/src/UserStore.cs), [RoleStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/RoleStoreBase.cs) and [RoleStore](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/EntityFrameworkCore/src/RoleStore.cs) classes can be verified.
 
 >A way to facilitate the creation of database structure when another persistence mechanism will be used with a relational database is to configure the project with Entity Framework Core, generate the migration, apply the migration with tables and fields on the database and after that remove the EF Core dependency and uses another persistence mechanism as showed above.
+
+## SignManager x UserManager x RoleManager
+
+The objective of this section is talk about the most important Identity services classes: SignManager, UserManager and RoleManager.
+
+These classes are responsible to manager all process of store users, authentication and deal with roles and claims. Understand the mainly services of these classes is essential for uses correctly the ASP.NET Core Identity. Throughout this documentation many examples of how to use these classes will be shown.
+
+* **SignManager**: provides the APIs for user sign in;
+* **UserManager**: provides the APIs for managing user in a persistence store;
+* **RoleManager**: provides the APIs for managing roles in a persistence store.
 
 ## Registering an user
 
