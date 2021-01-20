@@ -43,6 +43,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Claims](#claims)
     * [Roles](#roles)
     * [Policies](#policies)
+* [Authentication REST API](#authentication-rest-api)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -150,6 +151,8 @@ The solution `AspNetCoreIdentityLab` is divided into two projects: `AspNetCoreId
 >[Microsoft.AspNetCore.Authentication.Google 3.1.10](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google/3.1.10)
 
 >[Dapper 2.0.35](https://www.nuget.org/packages/Dapper/2.0.35)
+
+>[Microsoft.AspNetCore.Authentication.JwtBearer 3.1.11](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer/3.1.11)
 
 ### AspNetCoreIdentityLab-Application
 
@@ -935,6 +938,54 @@ public class BackupController : Controller
     }
 }
 ```
+
+## Authentication REST API
+
+The most of modern applications has a REST API with the objective that communicates with other softwares or mobile app or web front-end.
+
+Thinking that the most of modern applications must expose services in a REST API the ASP.NET Core Identity services can't different.
+
+Based on that this section will show how to expose ASP.NET Core Identity authentication services in a REST API.
+
+### Configuration
+
+A new project called [AspNetCoreIdentityLab.Api](./AspNetCoreIdentityLab.Api/) was added to solution. This project has some configuration classes, Controllers and Models that is part of REST API.
+
+In the first the [AuthenticationDbContext](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts/AuthenticationDbContext.cs) was added to solution. The authentication api uses a separed database called `Authentication`. After that a reference to persistence project was created and the AuthenticationDbContext configured on ConfigureServices method of AspNetCoreIdentityLab.Api [Startup](./AspNetCoreIdentityLab.Api/Startup.cs) class. 
+
+With this configurations the [IdentityStructure](./AspNetCoreIdentityLab.Persistence/Migrations/Authentication/20210118132541_IdentityStructure.cs) can be generated on database.
+
+### Json Web Token (JWT)
+
+JSON Web Tokens (JWT) are an open, industry standard for representing claims securely between two parties. This standard will be used to generate the token after the authentication. The token has important information for authorize the user of api.
+
+For this the [JwtBearer](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer/) package was added on AspNetCoreIdentityLab.Api project. 
+
+The configuration for this package is defined on methods `GetAuthenticationOptions` and `GetJwtBearerOptions` of [Startup](./AspNetCoreIdentityLab.Api/Startup.cs) class.
+
+To generate tokens the [JwtService](./AspNetCoreIdentityLab.Api/Jwt/JwtService.cs) is used by the application.
+
+A configuration to use JWT needs to be defined on `secrets.json`. Below are presented the configuration example used in the project's secrets.json.
+
+``` JSON
+{
+  "Jwt": {
+    "Issuer": "https://localhost:44328/",
+    "Secret": "b14ca8998a4e4133bbce2ea2377a1916",
+    "ExpirationInDays": 30
+  }
+}
+```
+
+### API resources
+
+The [UserController](./AspNetCoreIdentityLab.Api/Controllers/UserController.cs) has the responsability of expose the authentication REST API.
+
+First of all the api client should register a user in the application. For this the **SignUp** service must be requested. In request the `POST` http verb needs to be used sending the Email, Password and Occupation of user.
+
+After that the api user should request the **SignIn** service. This service needs the `POST` http verb and the Email and Password for authentication. If everything is right the service send a response with the JWT token.
+
+The **GetAll** service needs a `GET` http verb and has as response the list of users registered on the database. This service has a `[Authorize]` attribute that means only requests with token will be accepted.
 
 ## Logging
 
