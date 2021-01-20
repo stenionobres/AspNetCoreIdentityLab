@@ -45,6 +45,9 @@ After the case studies, the main conclusions were documented in this file and se
     * [Roles](#roles)
     * [Policies](#policies)
 * [Authentication REST API](#authentication-rest-api)
+    * [Configuration](#configuration)
+    * [Json Web Token (JWT)](#json-web-token-(JWT))
+    * [API resources](#api-resources)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
