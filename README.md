@@ -46,7 +46,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Policies](#policies)
 * [Authentication REST API](#authentication-rest-api)
     * [Configuration](#configuration)
-    * [Json Web Token (JWT)](#json-web-token-(JWT))
+    * [Json Web Token (JWT)](#json-web-token-jwt)
     * [API resources](#api-resources)
 * [Logging](#logging)
 * Fast tips
