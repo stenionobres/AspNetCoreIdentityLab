@@ -14,8 +14,9 @@ After the case studies, the main conclusions were documented in this file and se
 * [Getting Started](#getting-started)
 * [Project Requirements](#project-requirements)
 * [Identity Default Database Model](#identity-default-database-model)
-* [Project Structure](#project-structure)
+* [Solution Structure](#solution-structure)
     * [Used Packages](#used-packages)
+    * [AspNetCoreIdentityLab-Api](#AspNetCoreIdentityLab-Api)
     * [AspNetCoreIdentityLab-Application](#AspNetCoreIdentityLab-Application)
     * [AspNetCoreIdentityLab-Persistence](#AspNetCoreIdentityLab-Persistence)
 * [Authentication x Authorization](#authentication-x-authorization)
@@ -130,9 +131,9 @@ The entity types are related to each other in the following ways:
 
 ![image info](./readme-pictures/aspnet-core-identity-default-database-model.jpg)
 
-## Project Structure
+## Solution Structure
 
-The solution `AspNetCoreIdentityLab` is divided into two projects: `AspNetCoreIdentityLab.Application` and `AspNetCoreIdentityLab.Persistence`. Below each of the projects are detailed.
+The solution `AspNetCoreIdentityLab` is divided into three projects: `AspNetCoreIdentityLab.Api`, `AspNetCoreIdentityLab.Application` and `AspNetCoreIdentityLab.Persistence`. In the next sections the projects are detailed.
 
 ### Used Packages
 
@@ -157,6 +158,8 @@ The solution `AspNetCoreIdentityLab` is divided into two projects: `AspNetCoreId
 >[Dapper 2.0.35](https://www.nuget.org/packages/Dapper/2.0.35)
 
 >[Microsoft.AspNetCore.Authentication.JwtBearer 3.1.11](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer/3.1.11)
+
+### AspNetCoreIdentityLab-Api
 
 ### AspNetCoreIdentityLab-Application
 
