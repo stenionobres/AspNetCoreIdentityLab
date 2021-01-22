@@ -45,6 +45,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Claims](#claims)
     * [Roles](#roles)
     * [Policies](#policies)
+    * [Authorization service](#authorization-service)
 * [Authentication REST API](#authentication-rest-api)
     * [Configuration](#configuration)
     * [Json Web Token (JWT)](#json-web-token-jwt)
@@ -953,6 +954,31 @@ public class BackupController : Controller
     {
 
     }
+}
+```
+
+### Authorization service
+
+Sometimes is necessary apply authorization in a block of code in a controller action by example. For this it's possible to use a `IAuthorizationService` instance directly. 
+
+A IAuthorizationService has two method overloads: one accepting the resource and the policy name and the other accepting the resource and a list of requirements to evaluate.
+
+Below a example of code where the IAuthorizationService is used to verify if a video resource can be added on repository.
+
+``` C#
+[HttpPost]
+[Authorize]
+public async Task<IActionResult> AddVideo([FromBody] VideoVM video) 
+{ 
+    var authorizationResult = await _authorizationService.AuthorizeAsync(User, video, "AddVideoPolicy");
+ 
+    if (authorizationResult.Succeeded) 
+    {
+        VideoRepository.Videos.Add (video);
+        return Ok ();
+    } 
+    
+    return new ForbidResult ();
 }
 ```
 
