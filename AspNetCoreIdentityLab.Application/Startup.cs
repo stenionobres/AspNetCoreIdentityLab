@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AspNetCoreIdentityLab.Persistence.Mappers;
 using AspNetCoreIdentityLab.Persistence.IdentityStores;
+using AspNetCoreIdentityLab.Application.CustomAuthorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -69,6 +71,14 @@ namespace AspNetCoreIdentityLab.Application
             services.AddTransient<GoogleRecaptchaService>();
             services.AddTransient<UserLoginIPService>();
             services.AddTransient<UserLoginIPMapper>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AtLeastFiveYearsExperience", policy => policy.Requirements.Add(new TimeExperienceRequirement(5)));
+                options.AddPolicy("AtLeastSevenYearsExperience", policy => policy.Requirements.Add(new TimeExperienceRequirement(7)));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, TimeExperienceHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
