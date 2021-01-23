@@ -882,7 +882,7 @@ Sometimes only claims and roles aren't enough to define a policy. In this case i
 * Requirement: a requirement is a collection of data parameters used by the policy to evaluate the user Identity;
 * Handler: a handler is the responsible of evaluating the properties of the requirements to determine if the user is authorized to access to a specific resource;
 
-To better understand how to create a custom policy the concepts will be detailed based on time experience policy example. 
+To better understand how to create a custom policy the concepts will be detailed based on time experience policy example. More detail about this code can be seen in [CustomAuthorization](./AspNetCoreIdentityLab.Application/CustomAuthorization) namespace.
 
 In the first is necessary create a requirement. A requirement implements `IAuthorizationRequirement` interface.
 
