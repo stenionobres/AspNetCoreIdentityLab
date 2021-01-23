@@ -79,6 +79,7 @@ namespace AspNetCoreIdentityLab.Application
             });
 
             services.AddSingleton<IAuthorizationHandler, TimeExperienceHandler>();
+            services.AddTransient<IAuthorizationPolicyProvider, CustomPolicyProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

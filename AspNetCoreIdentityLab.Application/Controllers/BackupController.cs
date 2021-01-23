@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using AspNetCoreIdentityLab.Application.CustomAuthorization;
 
 namespace AspNetCoreIdentityLab.Application.Controllers
 {
@@ -15,6 +16,12 @@ namespace AspNetCoreIdentityLab.Application.Controllers
         public ActionResult RebuildIndexes()
         {
             return Ok("RebuildIndexes");
+        }
+
+        [TimeExperienceAuthorize(TimeExperience.LEVEL_THREE)]
+        public ActionResult RemoveBackup()
+        {
+            return Ok("RemoveBackup");
         }
     }
 }
