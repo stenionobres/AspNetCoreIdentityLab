@@ -46,6 +46,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Roles](#roles)
     * [Policies](#policies)
     * [Authorization service](#authorization-service)
+    * [Custom Authorization Attribute](#custom-authorization-attribute)
 * [Authentication REST API](#authentication-rest-api)
     * [Configuration](#configuration)
     * [Json Web Token (JWT)](#json-web-token-jwt)
@@ -979,6 +980,39 @@ public async Task<IActionResult> AddVideo([FromBody] VideoVM video)
     } 
     
     return new ForbidResult ();
+}
+```
+
+### Custom Authorization Attribute
+
+To use standard authorization the `[Authorize]` attribute should be used in controllers. In some cases the same policy with different parameters values needs to be applied in different contexts. Instead of create many policies entries on Startup class is possible create a **custom attribute** for use the same policy with different parameters values.
+
+For this the class [TimeExperienceAuthorizeAttribute](./AspNetCoreIdentityLab.Application/CustomAuthorization/TimeExperienceAuthorizeAttribute.cs) was created extending the `AuthorizeAttribute` class. This class use the [TimeExperience](./AspNetCoreIdentityLab.Application/CustomAuthorization/TimeExperience.cs) enumerator that has the possibilities of values for authorization.
+
+To generate the policies with different parameter value the [CustomPolicyProvider](./AspNetCoreIdentityLab.Application/CustomAuthorization/CustomPolicyProvider.cs) class was created. This class checks if the policy name matchs with the **policy prefix** applied on [TimeExperienceAuthorizeAttribute](./AspNetCoreIdentityLab.Application/CustomAuthorization/TimeExperienceAuthorizeAttribute.cs) class, if true adds the [TimeExperienceRequirement](./AspNetCoreIdentityLab.Application/CustomAuthorization/TimeExperienceRequirement.cs) with the parameter value to new policy.
+
+Lastly it's necessary register the CustomPolicyProvider class on Startup class using the code below.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddTransient<IAuthorizationPolicyProvider, CustomPolicyProvider>();
+}
+```
+
+For example purpose the TimeExperienceAuthorizeAttribute is being used on [BackupController](./AspNetCoreIdentityLab.Application/Controllers/BackupController.cs) with the code below:
+
+``` C#
+[Authorize(Policy = "AtLeastFiveYearsExperience")]
+public class BackupController : Controller
+{
+    //omitted code
+
+    [TimeExperienceAuthorize(TimeExperience.LEVEL_THREE)]
+    public ActionResult RemoveBackup()
+    {
+        return Ok("RemoveBackup");
+    }
 }
 ```
 
