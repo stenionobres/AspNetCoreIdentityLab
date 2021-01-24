@@ -975,11 +975,11 @@ public async Task<IActionResult> AddVideo([FromBody] VideoVM video)
  
     if (authorizationResult.Succeeded) 
     {
-        VideoRepository.Videos.Add (video);
-        return Ok ();
+        VideoRepository.Videos.Add(video);
+        return Ok();
     } 
     
-    return new ForbidResult ();
+    return new ForbidResult();
 }
 ```
 
