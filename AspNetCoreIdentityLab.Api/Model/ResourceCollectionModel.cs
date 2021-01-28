@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using AspNetCoreIdentityLab.Api.DynamicAuthorization;
 
 namespace AspNetCoreIdentityLab.Api.Model
@@ -12,25 +12,22 @@ namespace AspNetCoreIdentityLab.Api.Model
             var principalResource = ResourceCollection.Get();
 
             Resources = new ResourceModel(principalResource.Description, principalResource.Permissions);
-                
-            MountResources(principalResource);
+
+            MountResources(principalResource.InnerResources, Resources.Resources);
         }
 
-        private ResourceModel MountResources(Resource resource)
+        private IEnumerable<ResourceModel> MountResources(IEnumerable<Resource> innerResources, List<ResourceModel> resourceModels)
         {
-            if (resource.InnerResources.Any())
+            foreach (var innerResource in innerResources)
             {
-                foreach (var innerResource in resource.InnerResources)
-                {
-                    var resourceModel = MountResources(innerResource);
+                var resourceModel = new ResourceModel(innerResource.Description, innerResource.Permissions);
+                
+                MountResources(innerResource.InnerResources, resourceModel.Resources);
 
-                    Resources.Resources.Add(resourceModel);
-                }
+                resourceModels.Add(resourceModel);
             }
 
-            var innerResourceModel = new ResourceModel(resource.Description, resource.Permissions);
-
-            return innerResourceModel;
+            return resourceModels;
         }
     }
 }
