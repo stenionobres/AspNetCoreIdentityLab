@@ -13,16 +13,18 @@ namespace AspNetCoreIdentityLab.Api.Model
 
             Resources = new ResourceModel(principalResource.Description, principalResource.Permissions);
 
-            MountResources(principalResource.InnerResources, Resources.Resources);
+            Resources.Resources.AddRange(MountResources(principalResource.InnerResources));
         }
 
-        private IEnumerable<ResourceModel> MountResources(IEnumerable<Resource> innerResources, List<ResourceModel> resourceModels)
+        private IEnumerable<ResourceModel> MountResources(IEnumerable<Resource> innerResources)
         {
+            var resourceModels = new List<ResourceModel>();
+
             foreach (var innerResource in innerResources)
             {
                 var resourceModel = new ResourceModel(innerResource.Description, innerResource.Permissions);
-                
-                MountResources(innerResource.InnerResources, resourceModel.Resources);
+
+                resourceModel.Resources.AddRange(MountResources(innerResource.InnerResources));
 
                 resourceModels.Add(resourceModel);
             }
