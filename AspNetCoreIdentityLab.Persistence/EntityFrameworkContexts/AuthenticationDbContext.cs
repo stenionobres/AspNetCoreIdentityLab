@@ -13,12 +13,20 @@ namespace AspNetCoreIdentityLab.Persistence.EntityFrameworkContexts
 
         public static readonly ILoggerFactory LoggerFactoryToConsole = LoggerFactory.Create(builder => builder.AddConsole());
 
+        public DbSet<Policy> Policy { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (optionsBuilder.IsConfigured) return;
 
             optionsBuilder.UseSqlServer(ConnectionString);
             optionsBuilder.UseLoggerFactory(LoggerFactoryToConsole);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Policy>().Property(c => c.Id).ValueGeneratedNever();
         }
     }
 }
