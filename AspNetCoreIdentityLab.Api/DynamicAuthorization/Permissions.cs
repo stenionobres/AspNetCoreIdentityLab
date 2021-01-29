@@ -4,20 +4,20 @@ namespace AspNetCoreIdentityLab.Api.DynamicAuthorization
 {
     public enum Permissions
     {
-        [Display(GroupName = "User", Name = UserAction.Read, Description = "Can read a User")]
+        [Display(Description = UserAction.Read)]
         CanReadUser = 1,
 
-        [Display(GroupName = "User", Name = UserAction.Update, Description = "Can update a User")]
+        [Display(Description = UserAction.Update)]
         CanUpdateUser,
 
 
-        [Display(GroupName = "Role", Name = UserAction.Create, Description = "Can create a Role")]
+        [Display(Description = UserAction.Create)]
         CanCreateRole,
 
-        [Display(GroupName = "Role", Name = UserAction.Delete, Description = "Can delete a Role")]
+        [Display(Description = UserAction.Delete)]
         CanDeleteRole,
 
-        [Display(GroupName = "Reports", Name = "PrintReports", Description = "Can print reports")]
+        [Display(Description = "PrintReports")]
         CanPrintReports
     }
 }
