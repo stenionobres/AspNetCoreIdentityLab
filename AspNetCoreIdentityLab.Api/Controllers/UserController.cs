@@ -75,5 +75,22 @@ namespace AspNetCoreIdentityLab.Api.Controllers
 
             return Ok(users);
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult> UserRole(UserRoleModel userRoleModel)
+        {
+            var user = await _userManager.FindByIdAsync(userRoleModel.UserId.ToString());
+            var result = await _userManager.AddToRoleAsync(user, userRoleModel.RoleName);
+
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+
+            var errorDetail = result.Errors.First().Description;
+
+            return Problem(detail: errorDetail, instance: null, statusCode: 500);
+        }
     }
 }
