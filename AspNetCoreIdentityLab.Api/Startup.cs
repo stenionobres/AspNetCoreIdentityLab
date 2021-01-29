@@ -12,6 +12,8 @@ using AspNetCoreIdentityLab.Api.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AspNetCoreIdentityLab.Api.Services;
+using AspNetCoreIdentityLab.Persistence.Mappers;
 
 namespace AspNetCoreIdentityLab.Api
 {
@@ -37,6 +39,8 @@ namespace AspNetCoreIdentityLab.Api
                     .AddJwtBearer(jwtBearerOptions => { GetJwtBearerOptions(jwtBearerOptions); });
 
             services.AddTransient<JwtService>();
+            services.AddTransient<PolicyService>();
+            services.AddTransient<PolicyMapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

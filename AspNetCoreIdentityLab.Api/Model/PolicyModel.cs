@@ -8,6 +8,8 @@ namespace AspNetCoreIdentityLab.Api.Model
         public int Id { get; set; }
         public string Description { get; set; }
 
+        public PolicyModel() { }
+
         public PolicyModel(Permissions permission)
         {
             Id = Convert.ToInt32(permission);
