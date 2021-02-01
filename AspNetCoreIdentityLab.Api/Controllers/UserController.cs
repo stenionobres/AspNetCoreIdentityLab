@@ -7,6 +7,7 @@ using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
 using AspNetCoreIdentityLab.Api.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using AspNetCoreIdentityLab.Api.DynamicAuthorization;
 
 namespace AspNetCoreIdentityLab.Api.Controllers
 {
@@ -61,7 +62,7 @@ namespace AspNetCoreIdentityLab.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [HasPermission(Permissions.CanReadUser)]
         public ActionResult<IEnumerable<UserModel>> GetAll()
         {
             var users = _userManager.Users.Select(u => new UserModel() 

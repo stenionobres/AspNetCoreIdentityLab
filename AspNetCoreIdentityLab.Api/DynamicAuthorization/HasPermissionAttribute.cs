@@ -6,7 +6,7 @@ namespace AspNetCoreIdentityLab.Api.DynamicAuthorization
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = false)]
     public class HasPermissionAttribute : AuthorizeAttribute
     {
-        public HasPermissionAttribute(Permissions permission) : base(policy: permission.ToString())
+        public HasPermissionAttribute(Permissions permission) : base(policy: Convert.ToInt32(permission).ToString())
         {
 
         }
