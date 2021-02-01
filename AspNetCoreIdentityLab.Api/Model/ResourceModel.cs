@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using AspNetCoreIdentityLab.Api.DynamicAuthorization;
 
 namespace AspNetCoreIdentityLab.Api.Model
@@ -19,9 +21,20 @@ namespace AspNetCoreIdentityLab.Api.Model
         {
             foreach (var permission in permissions)
             {
-                Policies.Add(new PolicyModel(permission));
+                if (IsNotObsolete(permission))
+                {
+                    Policies.Add(new PolicyModel(permission));
+                }
             }
         }
 
+        private bool IsNotObsolete(Permissions permission)
+        {
+            var enumType = permission.GetType();
+            var enumMember = enumType.GetMember(permission.ToString());
+            var obsoleteAttribute = enumMember[0].GetCustomAttribute<ObsoleteAttribute>();
+
+            return obsoleteAttribute == null;
+        }
     }
 }

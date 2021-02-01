@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace AspNetCoreIdentityLab.Api.DynamicAuthorization
 {
@@ -17,6 +18,7 @@ namespace AspNetCoreIdentityLab.Api.DynamicAuthorization
         [Display(Description = UserAction.Delete)]
         CanDeleteRole,
 
+        [Obsolete]
         [Display(Description = "PrintReports")]
         CanPrintReports
     }
