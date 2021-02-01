@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AspNetCoreIdentityLab.Api.Services;
 using AspNetCoreIdentityLab.Persistence.Mappers;
+using Microsoft.AspNetCore.Authorization;
+using AspNetCoreIdentityLab.Api.DynamicAuthorization;
 
 namespace AspNetCoreIdentityLab.Api
 {
@@ -41,6 +43,9 @@ namespace AspNetCoreIdentityLab.Api
             services.AddTransient<JwtService>();
             services.AddTransient<PolicyService>();
             services.AddTransient<PolicyMapper>();
+
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddTransient<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
