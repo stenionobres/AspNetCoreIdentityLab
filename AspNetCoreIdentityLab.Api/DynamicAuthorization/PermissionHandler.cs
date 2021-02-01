@@ -8,7 +8,7 @@ namespace AspNetCoreIdentityLab.Api.DynamicAuthorization
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
             var user = context.User;
-            var hasPermissionClaim = user.HasClaim("Policy", requirement.PermissionName);
+            var hasPermissionClaim = user.HasClaim(Constants.PolicyType, requirement.PermissionName);
 
             if (hasPermissionClaim)
             {

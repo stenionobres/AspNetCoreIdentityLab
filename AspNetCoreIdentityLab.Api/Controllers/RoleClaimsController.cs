@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using AspNetCoreIdentityLab.Api.Model;
+using AspNetCoreIdentityLab.Api.DynamicAuthorization;
 
 namespace AspNetCoreIdentityLab.Api.Controllers
 {
@@ -21,7 +22,7 @@ namespace AspNetCoreIdentityLab.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> Save(RoleClaimModel roleClaimModel)
         {
-            var claim = new Claim("Policy", roleClaimModel.PolicyId.ToString());
+            var claim = new Claim(Constants.PolicyType, roleClaimModel.PolicyId.ToString());
             var role = await _roleManager.FindByIdAsync(roleClaimModel.RoleId.ToString());
 
             if (role == null)

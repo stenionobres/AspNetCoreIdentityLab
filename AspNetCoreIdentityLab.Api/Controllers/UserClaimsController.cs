@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using AspNetCoreIdentityLab.Api.Model;
 using AspNetCoreIdentityLab.Persistence.DataTransferObjects;
+using AspNetCoreIdentityLab.Api.DynamicAuthorization;
 
 namespace AspNetCoreIdentityLab.Api.Controllers
 {
@@ -22,7 +23,7 @@ namespace AspNetCoreIdentityLab.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> Save(UserClaimModel userClaimModel)
         {
-            var claim = new Claim("Policy", userClaimModel.PolicyId.ToString());
+            var claim = new Claim(Constants.PolicyType, userClaimModel.PolicyId.ToString());
             var user = await _userManager.FindByIdAsync(userClaimModel.UserId.ToString());
 
             if (user == null)
