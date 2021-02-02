@@ -51,6 +51,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Configuration](#configuration)
     * [Json Web Token (JWT)](#json-web-token-jwt)
     * [API resources](#api-resources)
+* [Dynamic Authorization](#dynamic-authorization)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -1063,6 +1064,18 @@ First of all the api client should register a user in the application. For this 
 After that the api user should request the **SignIn** service. This service needs the `POST` http verb and the Email and Password for authentication. If everything is right the service send a response with the JWT token.
 
 The **GetAll** service needs a `GET` http verb and has as response the list of users registered on the database. This service has a `[Authorize]` attribute that means only requests with token will be accepted.
+
+## Dynamic Authorization
+
+Several applications need flexibility in their authorization mechanism, especially enterprise applications that has many modules, submodules and features. However for create an authorization solution with more flexibility it's necessary create so many policies in the source code. This situation causes several problems:
+
+* Need to create many policies in the source code;
+* Need to redeploy the application when new policies are created;
+* Need to edit strings on controllers;
+* Need to add new roles on controllers when working with multi roles authorization;
+* Hard to work with modules and submodules structure;
+
+Faced with these problems, below will be shown a **solution proposal for dynamic authorization**. This solution aims to avoid the problems above and to provide an easy way for associate users with modules, submodules and actions.
 
 ## Logging
 
