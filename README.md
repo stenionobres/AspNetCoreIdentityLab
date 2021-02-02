@@ -52,6 +52,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Json Web Token (JWT)](#json-web-token-jwt)
     * [API resources](#api-resources)
 * [Dynamic Authorization](#dynamic-authorization)
+    * [Applications authorization types](#applications-authorization-types)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -1076,6 +1077,17 @@ Several applications need flexibility in their authorization mechanism, especial
 * Hard to work with modules and submodules structure;
 
 Faced with these problems, below will be shown a **solution proposal for dynamic authorization**. This solution aims to avoid the problems above and to provide an easy way for associate users with modules, submodules and actions.
+
+### Applications authorization types
+
+In the most of applications the authorization requirements breaks down into two parts:
+
+* **Features**: provides for users the capacity of access modules, submodules or features of application;
+* **Data**: configure the data that users can view, edit or delete. For instance, you can see your personal information, but not other people’s personal information.
+
+>In this solution only the **Features type** is implemented because this type is the most common on applications.
+
+For curiosity a solution for the authorization `Data type` can uses a column named **OwnedBy** in the database tables. This column tells you who owns the information, so that the app presents the information only to the right people.
 
 ## Logging
 
