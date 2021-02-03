@@ -53,6 +53,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [API resources](#api-resources)
 * [Dynamic Authorization](#dynamic-authorization)
     * [Applications authorization types](#applications-authorization-types)
+    * [Resource class structure](#resource-class-structure)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -1088,6 +1089,68 @@ In the most of applications the authorization requirements breaks down into two 
 >In this solution only the **Features type** is implemented because this type is the most common on applications.
 
 For curiosity a solution for the authorization `Data type` can uses a column named **OwnedBy** in the database tables. This column tells you who owns the information, so that the app presents the information only to the right people.
+
+### Resource class structure
+
+We know that no-trivial software demands a set of many nested menu and features. It's not hard to see enterprise applications with hundred of features. In general that organization is made in modules, submodules and your features. And that's not all, sometimes is necessary authorize different actions on the same feature like: Create, Delete, Read and Update.
+
+Below is a small example of a enterprise application with modules, sub-modules, resources and their actions:
+
+![image info](./readme-pictures/resource-hierarchy.jpg)
+
+The big question is: **How to model this structure in a classes design?** and more **How to connect this structure with the authorization mechanism?**
+
+Following is shown a basic class diagram that presents a structure of resources. These resources can be modules, submodules and features of an application or API resources that needs to be authorized.
+
+![image info](./readme-pictures/resource-class-diagram.png)
+
+The principal class is named [Resource](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Resource.cs). This class can to represent a feature, module or submodules including an API resource if needed. A list of resources and [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) can be added to a specific resource.
+
+The [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) class represents the permissions that are used on controllers. This class uses the [UserAction](./AspNetCoreIdentityLab.Api/DynamicAuthorization/UserAction.cs) class that has some constants used with `Display Attribute`. 
+
+[ResourceCollection](./AspNetCoreIdentityLab.Api/DynamicAuthorization/ResourceCollection.cs) is a class that represents the hierarchy of nested resources. This should be used to set up options for relating features to Roles, Users and the user menu. Below is shown a code based on image presented at the beginning of the session.
+
+``` C#
+public class ResourceCollection
+{
+    public static Resource Get()
+    {
+         return new Resource("Menu").Add(
+                new Resource("Logistics", Permissions.CanAccessLogistics),
+                new Resource("Accounting", Permissions.CanAccessAccounting),
+                new Resource("Human Resources").Add(
+                    new Resource("Employees").Add(
+                        new Resource("Employee Registration").Add(
+                            Permissions.CanCreateEmployee,
+                            Permissions.CanDeleteEmployee,
+                            Permissions.CanReadEmployee,
+                            Permissions.CanUpdateEmployee
+                        ),
+                        new Resource("Dependents Registration").Add(
+                            Permissions.CanCreateDependents,
+                            Permissions.CanDeleteDependents,
+                            Permissions.CanReadDependents,
+                            Permissions.CanUpdateDependents
+                        )
+                    ),
+                    new Resource("Vacation").Add(
+                        new Resource("Vacation Planning").Add(
+                            Permissions.CanCreateVacationPlanning,
+                            Permissions.CanReadVacationPlanning
+                        ),
+                        new Resource("Payment History", Permissions.CanAccessPaymentHistory),
+                        new Resource("Reports").Add(
+                            new Resource("Time Report", Permissions.CanAccessTimeReport),
+                            new Resource("Costs Report", Permissions.CanAccessCostsReport),
+                            new Resource("Vacation by Period", Permissions.CanAccessVacationByPeriod)
+                        )
+                    )
+                )
+            );
+    }
+}
+```
+
 
 ## Logging
 
