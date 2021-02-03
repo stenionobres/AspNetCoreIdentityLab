@@ -62,7 +62,6 @@ namespace AspNetCoreIdentityLab.Api.Controllers
         }
 
         [HttpGet]
-        [HasPermission(Permissions.CanReadUser)]
         public ActionResult<IEnumerable<UserModel>> GetAll()
         {
             var users = _userManager.Users.Select(u => new UserModel() 

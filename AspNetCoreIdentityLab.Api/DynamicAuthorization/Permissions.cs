@@ -5,21 +5,61 @@ namespace AspNetCoreIdentityLab.Api.DynamicAuthorization
 {
     public enum Permissions
     {
+        CanAccessLogistics = 1,
+        CanAccessAccounting,
+
+        [Display(Description = UserAction.Create)]
+        CanCreateEmployee,
+
+        [Display(Description = UserAction.Delete)]
+        CanDeleteEmployee,
+
         [Display(Description = UserAction.Read)]
-        CanReadUser = 1,
+        CanReadEmployee,
 
         [Display(Description = UserAction.Update)]
-        CanUpdateUser,
+        CanUpdateEmployee,
 
 
         [Display(Description = UserAction.Create)]
-        CanCreateRole,
+        CanCreateDependents,
 
         [Display(Description = UserAction.Delete)]
-        CanDeleteRole,
+        CanDeleteDependents,
 
-        [Obsolete]
-        [Display(Description = "PrintReports")]
-        CanPrintReports
+        [Display(Description = UserAction.Read)]
+        CanReadDependents,
+
+        [Display(Description = UserAction.Update)]
+        CanUpdateDependents,
+
+
+        [Display(Description = UserAction.Create)]
+        CanCreateVacationPlanning,
+
+        [Display(Description = UserAction.Read)]
+        CanReadVacationPlanning,
+
+
+        CanAccessPaymentHistory,
+
+        CanAccessTimeReport,
+        CanAccessCostsReport,
+        CanAccessVacationByPeriod,
+
+
+        [Display(Description = UserAction.Create)]
+        CanCreateTaskManager,
+
+        [Display(Description = UserAction.Delete)]
+        CanDeleteTaskManager,
+
+        [Display(Description = UserAction.Read)]
+        CanReadTaskManager,
+
+        [Display(Description = UserAction.Update)]
+        CanUpdateTaskManager,
+
+        CanAccessTaxCalculator
     }
 }

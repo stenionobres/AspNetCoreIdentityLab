@@ -22,7 +22,7 @@ namespace AspNetCoreIdentityLab.Api.Model
             var enumMember = enumType.GetMember(permission.ToString());
             var displayAttribute = enumMember[0].GetCustomAttribute<DisplayAttribute>();
 
-            Label = displayAttribute.Description;
+            Label = displayAttribute?.Description;
         }
     }
 }
