@@ -54,6 +54,7 @@ After the case studies, the main conclusions were documented in this file and se
 * [Dynamic Authorization](#dynamic-authorization)
     * [Applications authorization types](#applications-authorization-types)
     * [Resource class structure](#resource-class-structure)
+    * [Policy database structure](#policy-database-structure)
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
@@ -1151,6 +1152,17 @@ public class ResourceCollection
 }
 ```
 
+### Policy database structure
+
+Has been shown that each `Permission` of class [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) is used with the [HasPermission](./AspNetCoreIdentityLab.Api/DynamicAuthorization/HasPermissionAttribute.cs) attribute in controllers that needs to be authorized.
+
+These permissions represents policies that will be created dynamically at application runtime. After association of resources with Roles or Users the policies ids should be saved on database on tables `AspNetUserClaims` or `AspNetRoleClaims` using the fields named `ClaimValue`.
+
+A table called `Policy` was created to store the policies. The Id field is based on enumerator index of Permissions class and the Name field on item description of enumerator. The image below shown the relationship between the Policy table and the tables with claims.
+
+![image info](./readme-pictures/policy-database-detail.png)
+
+It is important to say that the foreign keys between the tables have not been established. The policy table is only for clarifying data on which policies are stored in other tables relating the Id field of the policy table to the ClaimValue field.
 
 ## Logging
 
