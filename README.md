@@ -1104,14 +1104,14 @@ In addition each permission existing in Permissions represents a resource inside
 
 ![image info](./readme-pictures/resource-roles-claims-api.png)
 
-The **image 02** shown a process that transforms the data from ResourceCollection class in authorizations that are stored in database tables of ASP.NET Core Identity. The [ResourceController](./AspNetCoreIdentityLab.Api/Controllers/ResourceController.cs) class mounts a json response that can be used by the application for list the features that can be authorized to a specific user ou to a specific role.
+The **image 02** shown a process that transforms the data from ResourceCollection class in authorizations that are stored in database tables of ASP.NET Core Identity. The [ResourceController](./AspNetCoreIdentityLab.Api/Controllers/ResourceController.cs) class mounts a json response that can be used by the application for list the features that can be authorized to a specific user or to a specific role.
 
 The json response has the resources and policies for application. After user from application associate other users with resources or roles with resources the controllers below can be use to store the data:
 
 * [PolicyController](./AspNetCoreIdentityLab.Api/Controllers/PolicyController.cs): should be used to save policies;
 * [RoleController](./AspNetCoreIdentityLab.Api/Controllers/RoleController.cs): should be used to save roles;
 * [RoleClaimsController](./AspNetCoreIdentityLab.Api/Controllers/RoleClaimsController.cs): should be used to save the claims for a specific role;
-* [UserClaimsController](./AspNetCoreIdentityLab.Api/Controllers/UserClaimsController.cs): should be use to save the claims for a specific user.
+* [UserClaimsController](./AspNetCoreIdentityLab.Api/Controllers/UserClaimsController.cs): should be used to save the claims for a specific user.
 
 ![image info](./readme-pictures/policy-model-database.png)
 
