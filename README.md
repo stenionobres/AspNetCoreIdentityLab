@@ -53,6 +53,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [API resources](#api-resources)
 * [Dynamic Authorization](#dynamic-authorization)
     * [Applications authorization types](#applications-authorization-types)
+    * [General concepts](#general-concepts)
     * [Resource class structure](#resource-class-structure)
     * [Policy database structure](#policy-database-structure)
 * [Logging](#logging)
@@ -1078,7 +1079,7 @@ Several applications need flexibility in their authorization mechanism, especial
 * Need to add new roles on controllers when working with multi roles authorization;
 * Hard to work with modules and submodules structure;
 
-Faced with these problems, below will be shown a **solution proposal for dynamic authorization**. This solution aims to avoid the problems above and to provide an easy way for associate users with modules, submodules and actions.
+Faced with these problems, below will be shown a **solution proposal for dynamic authorization**. This solution aims to avoid the problems above and to provide an easy way to authorize users in modules, submodules, features and actions.
 
 ### Applications authorization types
 
@@ -1090,6 +1091,31 @@ In the most of applications the authorization requirements breaks down into two 
 >In this solution only the **Features type** is implemented because this type is the most common on applications.
 
 For curiosity a solution for the authorization `Data type` can uses a column named **OwnedBy** in the database tables. This column tells you who owns the information, so that the app presents the information only to the right people.
+
+### General concepts
+
+In order to explain how this solution for dynamic authorization works some images will be shown.
+
+![image info](./readme-pictures/permissions-and-resources.png)
+
+The **image 01** shown a class named [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) that is used for enumerate the permissions that application should have. These permissions can be used on controllers to enable authorization. It's important to observe that [HasPermission](./AspNetCoreIdentityLab.Api/DynamicAuthorization/HasPermissionAttribute.cs) attribute should be used. 
+
+In addition each permission existing in Permissions represents a resource inside [ResourceCollection](./AspNetCoreIdentityLab.Api/DynamicAuthorization/ResourceCollection.cs) class. More details are shown in [Resource class structure](#resource-class-structure) section.
+
+![image info](./readme-pictures/resource-roles-claims-api.png)
+
+The **image 02** shown a process that transforms the data from ResourceCollection class in authorizations that are stored in database tables of ASP.NET Core Identity. The [ResourceController](./AspNetCoreIdentityLab.Api/Controllers/ResourceController.cs) class mounts a json response that can be used by the application for list the features that can be authorized to a specific user ou to a specific role.
+
+The json response has the resources and policies for application. After user from application associate other users with resources or roles with resources the controllers below can be use to store the data:
+
+* [PolicyController](./AspNetCoreIdentityLab.Api/Controllers/PolicyController.cs): should be used to save policies;
+* [RoleController](./AspNetCoreIdentityLab.Api/Controllers/RoleController.cs): should be used to save roles;
+* [RoleClaimsController](./AspNetCoreIdentityLab.Api/Controllers/RoleClaimsController.cs): should be used to save the claims for a specific role;
+* [UserClaimsController](./AspNetCoreIdentityLab.Api/Controllers/UserClaimsController.cs): should be use to save the claims for a specific user.
+
+![image info](./readme-pictures/policy-model-database.png)
+
+The **image 03** presents how to authorization structure data is organized. More details on [Policy database structure](#policy-database-structure) section. However in a few lines the Roles can be understood like user groups and these roles can have policies associated. As the same, individual authorizations can be stored in a user claims with the own policies.
 
 ### Resource class structure
 
