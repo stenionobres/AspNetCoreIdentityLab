@@ -53,7 +53,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [API resources](#api-resources)
 * [Dynamic Authorization](#dynamic-authorization)
     * [Applications authorization types](#applications-authorization-types)
-    * [How Dynamic Authorization works?](#how-dynamic-authorization-works?)
+    * [How Dynamic Authorization works?](#how-dynamic-authorization-works)
     * [Resource class structure](#resource-class-structure)
     * [Policy database structure](#policy-database-structure)
 * [Logging](#logging)
@@ -1094,8 +1094,8 @@ For curiosity a solution for the authorization `Data type` can uses a column nam
 
 ### How Dynamic Authorization works?
 
-* The developer should adds the name of permissions in the [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) class. The display attribute is used for shown the action name on Resource API;
-* The developer should adds the `HasPermission` attribute on controller or action that needs to be authorized;
+* The developer should adds the name of permissions in the [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) enum. The display attribute is used for shown the action name on Resource API;
+* The developer should adds the `HasPermission` attribute on [controller](./AspNetCoreIdentityLab.Api/Controllers/EmployeeController.cs) or action that needs to be authorized;
 * The developer should adds the resource on [ResourceCollection](./AspNetCoreIdentityLab.Api/DynamicAuthorization/ResourceCollection.cs) to provide a way for application knows which resources are avalaible;
 * The application should have features that allows an user create roles, associate resources to a specific role, associate users with roles and associate resources with a specific user;
 * The application should call the api for save the policies and policies ids related with roles and users;
@@ -1105,7 +1105,7 @@ In order to explain how this solution for dynamic authorization works some image
 
 ![image info](./readme-pictures/permissions-and-resources.png)
 
-The **image 01** shown a class named [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) that is used for enumerate the permissions that application should have. These permissions can be used on controllers to enable authorization. It's important to observe that [HasPermission](./AspNetCoreIdentityLab.Api/DynamicAuthorization/HasPermissionAttribute.cs) attribute should be used. 
+The **image 01** shown a class named [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) that is used for enumerate the permissions that application should have. These permissions can be used on [controllers](./AspNetCoreIdentityLab.Api/Controllers/EmployeeController.cs) to enable authorization. It's important to observe that [HasPermission](./AspNetCoreIdentityLab.Api/DynamicAuthorization/HasPermissionAttribute.cs) attribute should be used. 
 
 In addition each permission existing in Permissions represents a resource inside [ResourceCollection](./AspNetCoreIdentityLab.Api/DynamicAuthorization/ResourceCollection.cs) class. More details are shown in [Resource class structure](#resource-class-structure) section.
 
@@ -1113,7 +1113,7 @@ In addition each permission existing in Permissions represents a resource inside
 
 The **image 02** shown a process that transforms the data from ResourceCollection class in authorizations that are stored in database tables of ASP.NET Core Identity. The [ResourceController](./AspNetCoreIdentityLab.Api/Controllers/ResourceController.cs) class mounts a json response that can be used by the application for list the features that can be authorized to a specific user or to a specific role.
 
-The json response has the resources and policies for application. After user from application associate other users with resources or roles with resources the controllers below can be use to store the data:
+The json response has the resources and policies for application. So, the admin user should associate other users with resources or roles. The controllers below can be used to store the data:
 
 * [PolicyController](./AspNetCoreIdentityLab.Api/Controllers/PolicyController.cs): should be used to save policies;
 * [RoleController](./AspNetCoreIdentityLab.Api/Controllers/RoleController.cs): should be used to save roles;
@@ -1187,7 +1187,7 @@ public class ResourceCollection
 
 ### Policy database structure
 
-Has been shown that each `Permission` of class [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) is used with the [HasPermission](./AspNetCoreIdentityLab.Api/DynamicAuthorization/HasPermissionAttribute.cs) attribute in controllers that needs to be authorized.
+Has been shown that each `Permission` of enum [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) is used with the [HasPermission](./AspNetCoreIdentityLab.Api/DynamicAuthorization/HasPermissionAttribute.cs) attribute in controllers that needs to be authorized.
 
 These permissions represents policies that will be created dynamically at application runtime. After association of resources with Roles or Users the policies ids should be saved on database on tables `AspNetUserClaims` or `AspNetRoleClaims` using the fields named `ClaimValue`.
 
@@ -1195,7 +1195,7 @@ A table called `Policy` was created to store the policies. The Id field is based
 
 ![image info](./readme-pictures/policy-database-detail.png)
 
-It is important to say that the foreign keys between the tables have not been established. The policy table is only for clarifying data on which policies are stored in other tables relating the Id field of the policy table to the ClaimValue field.
+It is important to say that the **foreign keys between the tables have not been established**. The policy table is only for clarifying data on which policies are stored in other tables relating the Id field of the policy table to the ClaimValue field.
 
 ## Logging
 
