@@ -53,7 +53,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [API resources](#api-resources)
 * [Dynamic Authorization](#dynamic-authorization)
     * [Applications authorization types](#applications-authorization-types)
-    * [General concepts](#general-concepts)
+    * [How Dynamic Authorization works?](#how-dynamic-authorization-works?)
     * [Resource class structure](#resource-class-structure)
     * [Policy database structure](#policy-database-structure)
 * [Logging](#logging)
@@ -1092,7 +1092,14 @@ In the most of applications the authorization requirements breaks down into two 
 
 For curiosity a solution for the authorization `Data type` can uses a column named **OwnedBy** in the database tables. This column tells you who owns the information, so that the app presents the information only to the right people.
 
-### General concepts
+### How Dynamic Authorization works?
+
+* The developer should adds the name of permissions in the [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) class. The display attribute is used for shown the action name on Resource API;
+* The developer should adds the `HasPermission` attribute on controller or action that needs to be authorized;
+* The developer should adds the resource on [ResourceCollection](./AspNetCoreIdentityLab.Api/DynamicAuthorization/ResourceCollection.cs) to provide a way for application knows which resources are avalaible;
+* The application should have features that allows an user create roles, associate resources to a specific role, associate users with roles and associate resources with a specific user;
+* The application should call the api for save the policies and policies ids related with roles and users;
+* At runtime when the controller or action is called [AuthorizationPolicyProvider](./AspNetCoreIdentityLab.Api/DynamicAuthorization/AuthorizationPolicyProvider.cs) in conjunction with the [PermissionRequirement](./AspNetCoreIdentityLab.Api/DynamicAuthorization/PermissionRequirement.cs) and [PermissionHandler](./AspNetCoreIdentityLab.Api/DynamicAuthorization/PermissionHandler.cs) classes creates dynamically the policy and verify that the user has the required claim associated with it.
 
 In order to explain how this solution for dynamic authorization works some images will be shown.
 
