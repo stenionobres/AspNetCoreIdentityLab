@@ -51,6 +51,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Configuration](#configuration)
     * [Json Web Token (JWT)](#json-web-token-jwt)
     * [API resources](#api-resources)
+* [Authorization REST API](#authorization-rest-api)
 * [Dynamic Authorization](#dynamic-authorization)
     * [Applications authorization types](#applications-authorization-types)
     * [How Dynamic Authorization works?](#how-dynamic-authorization-works)
@@ -1068,6 +1069,20 @@ First of all the api client should register a user in the application. For this 
 After that the api user should request the **SignIn** service. This service needs the `POST` http verb and the Email and Password for authentication. If everything is right the service send a response with the JWT token.
 
 The **GetAll** service needs a `GET` http verb and has as response the list of users registered on the database. This service has a `[Authorize]` attribute that means only requests with token will be accepted.
+
+## Authorization REST API
+
+Just like the authentication API in some situations it's necessary exposes authorization services in an API.
+
+For that, some controllers need to be created to exposes services for create roles, associate claims with roles and associate claims with users. These controllers need to use instances of `RoleManager` and `UserManager` classes. To better understand what roles and claims are, the [Authorizing a user](#authorizing-a-user) topic should be read.
+
+To show examples some controllers will be presented:
+
+* [RoleController](./AspNetCoreIdentityLab.Api/Controllers/RoleController.cs): exposes resources to create and query roles;
+* [RoleClaimsController](./AspNetCoreIdentityLab.Api/Controllers/RoleClaimsController.cs): exposes resources to associate claims to roles;
+* [UserClaimsController](./AspNetCoreIdentityLab.Api/Controllers/UserClaimsController.cs): exposes resources to associate claims to users;
+
+>It is important to note that this API example is not intended to follow all the rest API design best practices and is probably not following. The main objective is to present a way to access ASP.NET Core Identity resources through an API. 
 
 ## Dynamic Authorization
 
