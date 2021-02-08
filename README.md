@@ -1030,6 +1030,8 @@ Thinking that the most of modern applications must expose services in a REST API
 
 Based on that this section will show how to expose ASP.NET Core Identity authentication services in a REST API.
 
+>It is important to note that this API example is not intended to follow all the rest API design best practices and is probably not following. The main objective is to present a way to access ASP.NET Core Identity resources through an API.
+
 ### Configuration
 
 A new project called [AspNetCoreIdentityLab.Api](./AspNetCoreIdentityLab.Api/) was added to solution. This project has some configuration classes, Controllers and Models that is part of REST API.
@@ -1082,7 +1084,7 @@ To show examples some controllers will be presented:
 * [RoleClaimsController](./AspNetCoreIdentityLab.Api/Controllers/RoleClaimsController.cs): exposes resources to associate claims to roles;
 * [UserClaimsController](./AspNetCoreIdentityLab.Api/Controllers/UserClaimsController.cs): exposes resources to associate claims to users;
 
->It is important to note that this API example is not intended to follow all the rest API design best practices and is probably not following. The main objective is to present a way to access ASP.NET Core Identity resources through an API. 
+>It is important to note that this API example is not intended to follow all the rest API design best practices and is probably not following. The main objective is to present a way to access ASP.NET Core Identity resources through an API.
 
 ## Dynamic Authorization
 
