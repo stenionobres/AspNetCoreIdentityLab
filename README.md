@@ -169,6 +169,20 @@ The solution `AspNetCoreIdentityLab` is divided into three projects: `AspNetCore
 
 ### AspNetCoreIdentityLab-Api
 
+It's a `ASP.NET Core Web Application` with **API template** which has the responsibility to exposes api services for authentication and authorization.
+
+The main namespaces are: `Controllers`, `DynamicAuthorization`, `Jwt`, `Model` and `Services`.
+
+* [Controllers](./AspNetCoreIdentityLab.Api/Controllers): classes that represent the api endpoints for authentication and authorization.
+
+* [DynamicAuthorization](./AspNetCoreIdentityLab.Api/DynamicAuthorization): classes used to model dynamic authorization that can be used to authorize modules, submodules and resources without needed to create new policies in the source code. 
+
+* [Jwt](./AspNetCoreIdentityLab.Api/Jwt): classes responsible for generating JWT Token.
+
+* [Model](./AspNetCoreIdentityLab.Api/Model): model classes that represents api data used on controllers.
+
+* [Services](./AspNetCoreIdentityLab.Api/Services): classes that encapsulates more complex rules used on controllers.
+
 ### AspNetCoreIdentityLab-Application
 
 ### AspNetCoreIdentityLab-Persistence
