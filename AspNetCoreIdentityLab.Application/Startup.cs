@@ -183,7 +183,7 @@ namespace AspNetCoreIdentityLab.Application
             var impersonateUserIdClaim = context.CurrentPrincipal.FindFirst("ImpersonateUserId");
             var isImpersonatingClaim = context.CurrentPrincipal.FindFirst("IsImpersonating");
 
-            if (isImpersonatingClaim.Value == "true" && originalUserIdClaim != null)
+            if (isImpersonatingClaim?.Value == "true" && originalUserIdClaim != null)
             {
                 var firstIdentity = context.NewPrincipal.Identities.FirstOrDefault();
 

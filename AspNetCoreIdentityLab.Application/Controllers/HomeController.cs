@@ -25,10 +25,8 @@ namespace AspNetCoreIdentityLab.Application.Controllers
             _signInManager = signInManager;
         }
 
-        public IActionResult Index(string message, string impersonateUserId)
+        public IActionResult Index(string message)
         {
-            impersonateUserId = impersonateUserId ?? User.FindFirst("ImpersonateUserId")?.Value;
-
             var users = _userManager.Users.ToList();
 
             var impersonateModel = new ImpersonateModel();
@@ -41,7 +39,7 @@ namespace AspNetCoreIdentityLab.Application.Controllers
                     Id = user.Id,
                     UserName = user.UserName,
                     Email = user.Email,
-                    IsImpersonated = user.Id.ToString() == impersonateUserId
+                    IsImpersonated = user.Id.ToString() == User.FindFirst("ImpersonateUserId")?.Value
                 };
                 
                 impersonateModel.Users.Add(impersonateUserModel);
@@ -69,16 +67,12 @@ namespace AspNetCoreIdentityLab.Application.Controllers
 
             if (currentUserId == userId)
             {
-                var impersonateUserId = User.FindFirst("ImpersonateUserId")?.Value;
-
-                return RedirectToAction("Index", "Home", new { message = "Error You cannot impersonate yourself", impersonateUserId });
+                return RedirectToAction("Index", "Home", new { message = "Error You cannot impersonate yourself" });
             }
 
             if (User.HasClaim("IsImpersonating", "true"))
             {
-                var impersonateUserId = User.FindFirst("ImpersonateUserId")?.Value;
-
-                return RedirectToAction("Index", "Home", new { message = "Error You are already in impersonation mode", impersonateUserId });
+                return RedirectToAction("Index", "Home", new { message = "Error You are already in impersonation mode" });
             }
 
             var impersonatedUser = await _userManager.FindByIdAsync(userId);
@@ -96,7 +90,7 @@ namespace AspNetCoreIdentityLab.Application.Controllers
 
             await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, userPrincipal);
 
-            return RedirectToAction("Index", "Home", new { message = "User impersonation started", impersonateUserId = userId });
+            return RedirectToAction("Index", "Home", new { message = "User impersonation started" });
         }
 
         [Authorize]
@@ -104,7 +98,7 @@ namespace AspNetCoreIdentityLab.Application.Controllers
         {
             if (!User.HasClaim("IsImpersonating", "true"))
             {
-                RedirectToAction("Index", "Home", new { message = "Error You are not impersonating now. Can't stop impersonation", impersonateUserId = "" });
+                RedirectToAction("Index", "Home", new { message = "Error You are not impersonating now. Can't stop impersonation" });
             }
 
             var originalUserId = User.FindFirst("OriginalUserId").Value;
@@ -113,7 +107,7 @@ namespace AspNetCoreIdentityLab.Application.Controllers
             await _signInManager.SignOutAsync();
             await _signInManager.SignInAsync(originalUser, isPersistent: true);
 
-            return RedirectToAction("Index", "Home", new { message = "User impersonation stopped", impersonateUserId = "" });
+            return RedirectToAction("Index", "Home", new { message = "User impersonation stopped" });
         }
     }
 }
