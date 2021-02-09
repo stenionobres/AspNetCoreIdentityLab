@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCoreIdentityLab.Application.Controllers
 {
@@ -58,6 +59,7 @@ namespace AspNetCoreIdentityLab.Application.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImpersonateUser(string userId)
         {
             var currentUserNameIdentifier = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -95,6 +97,7 @@ namespace AspNetCoreIdentityLab.Application.Controllers
             return RedirectToAction("Index", "Home", new { message = "User impersonation started", impersonateUserId = userId });
         }
 
+        [Authorize]
         public async Task<IActionResult> StopImpersonation()
         {
             if (!User.HasClaim("IsImpersonating", "true"))
