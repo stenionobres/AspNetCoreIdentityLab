@@ -19,6 +19,8 @@ using AspNetCoreIdentityLab.Persistence.Mappers;
 using AspNetCoreIdentityLab.Persistence.IdentityStores;
 using AspNetCoreIdentityLab.Application.CustomAuthorization;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace AspNetCoreIdentityLab.Application
 {
@@ -80,6 +82,8 @@ namespace AspNetCoreIdentityLab.Application
 
             services.AddSingleton<IAuthorizationHandler, TimeExperienceHandler>();
             services.AddTransient<IAuthorizationPolicyProvider, CustomPolicyProvider>();
+
+            services.Configure<SecurityStampValidatorOptions>(stampOptions => GetSecurityStampValidatorOptions(stampOptions));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -162,6 +166,33 @@ namespace AspNetCoreIdentityLab.Application
             googleOptions.ClientId = Configuration["SocialNetworkAuthentication:Google:ClientId"];
             googleOptions.ClientSecret = Configuration["SocialNetworkAuthentication:Google:ClientSecret"];
             googleOptions.SaveTokens = true;
+        }
+
+        private void GetSecurityStampValidatorOptions(SecurityStampValidatorOptions stampOptions)
+        {
+            var identityDefaultValidationInterval = TimeSpan.FromMinutes(30);
+
+            stampOptions.ValidationInterval = identityDefaultValidationInterval;
+            stampOptions.OnRefreshingPrincipal = CheckImpersonation;
+        }
+
+        // when SecurityStamp refreshes it's necessary remake the impersonation context
+        private Task<int> CheckImpersonation(SecurityStampRefreshingPrincipalContext context)
+        {
+            var originalUserIdClaim = context.CurrentPrincipal.FindFirst("OriginalUserId");
+            var impersonateUserIdClaim = context.CurrentPrincipal.FindFirst("ImpersonateUserId");
+            var isImpersonatingClaim = context.CurrentPrincipal.FindFirst("IsImpersonating");
+
+            if (isImpersonatingClaim.Value == "true" && originalUserIdClaim != null)
+            {
+                var firstIdentity = context.NewPrincipal.Identities.FirstOrDefault();
+
+                firstIdentity.AddClaim(originalUserIdClaim);
+                firstIdentity.AddClaim(impersonateUserIdClaim);
+                firstIdentity.AddClaim(isImpersonatingClaim);
+            }
+
+            return Task.FromResult(0);
         }
     }
 }

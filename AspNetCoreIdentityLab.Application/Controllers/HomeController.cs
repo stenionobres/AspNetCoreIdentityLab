@@ -27,6 +27,8 @@ namespace AspNetCoreIdentityLab.Application.Controllers
 
         public IActionResult Index(string message, string impersonateUserId)
         {
+            impersonateUserId = impersonateUserId ?? User.FindFirst("ImpersonateUserId")?.Value;
+
             var users = _userManager.Users.ToList();
 
             var impersonateModel = new ImpersonateModel();
