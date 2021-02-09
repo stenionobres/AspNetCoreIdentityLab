@@ -1,8 +1,56 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@using AspNetCoreIdentityLab.Persistence.DataTransferObjects
+@inject SignInManager<User> SignInManager
+@model ImpersonateModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (SignInManager.IsSignedIn(User))
+{
+    @if (!String.IsNullOrEmpty(Model.Message))
+    {
+        var statusMessageClass = Model.Message.StartsWith("Error") ? "danger" : "success";
+        <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            @Model.Message
+        </div>
+    }
+
+    <h2 class="text-center">Users</h2>
+
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th width="200"></th>
+        </tr>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                @if (user.IsImpersonated)
+                {
+                    <td>
+                        @Html.ActionLink("Stop Impersonation", "StopImpersonation", new { UserId = @user.Id })
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @Html.ActionLink("Impersonate", "ImpersonateUser", new { UserId = @user.Id })
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    </div>
+}
