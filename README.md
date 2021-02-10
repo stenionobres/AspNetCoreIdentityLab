@@ -192,11 +192,11 @@ It is a `.Net Core Class Library` which has the responsibility to maintain the E
 
 The main namespaces are: `DataTransferObjects`, `EntityFrameworkContexts` and `Migrations`.
 
-* **DataTransferObjects**: classes that represent the models that map the tables in each database.
+* [DataTransferObjects](./AspNetCoreIdentityLab.Persistence/DataTransferObjects): classes that represent the models that map the tables in each database.
 
-* **EntityFrameworkContexts**: classes that configure access to databases. In this case study, three databases were used.
+* [EntityFrameworkContexts](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts): classes that configure access to databases. In this case study, three databases were used.
 
-* **Migrations**: classes that represent the migrations that will be applied in each database.
+* [Migrations](./AspNetCoreIdentityLab.Persistence/Migrations): classes that represent the migrations that will be applied in each database.
 
 ## Authentication x Authorization
 
