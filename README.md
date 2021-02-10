@@ -440,7 +440,7 @@ In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Accou
 
 >Is important to know that if there are accounts already created without email confirmation and the configuration is changed to account confirmation, these accounts will not log in. The **EmailConfirmed flag in the AspNetUsers table** must be changed to the value = 1.
 
-## Authenticating an user
+## Authenticating a user
 
 ### Password Hashing
 
@@ -641,7 +641,7 @@ The scaffolded razor pages that can be used on project for sign-in with external
 
 For examples, authentication using Facebook and Google providers will be presented:
 
-* Facebook
+* **Facebook**
 
 To configure the use of the Facebook external provider you need add the nuget package on the project. The link is listed on [Used Packages](#used-packages). After that an app needs to be created on [Facebook developers page](https://developers.facebook.com/apps/). This [Microsoft page](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/facebook-logins?view=aspnetcore-3.1) presents a good step by step on how to create the app on Facebook. 
 
@@ -684,7 +684,7 @@ foreach (var token in info.AuthenticationTokens)
 }
 ```
 
-* Google
+* **Google**
 
 Just like the Facebook configuration, Google nuget package should be added on project and is listed in [Used Packages](#used-packages) section. After that an app needs to be created on [Google developers page](https://console.developers.google.com/). Two steps should be concluded, add the app and configure the OAuth client as Web Server.
 
