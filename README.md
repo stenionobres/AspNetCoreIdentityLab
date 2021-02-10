@@ -1276,4 +1276,4 @@ For more information please see the [documentation](https://docs.microsoft.com/e
 
 ## Authors
 
-* **Stenio Nobres** - [Github](https://github.com/stenionobres)
+* **Stenio Nobres** - [Github](https://github.com/stenionobres) | [LinkedIn](https://www.linkedin.com/in/stenionobres/)
