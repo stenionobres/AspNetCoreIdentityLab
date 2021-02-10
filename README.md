@@ -41,6 +41,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
     * [Authentication with external providers](#authentication-with-external-providers)
     * [Identifying same user login from different locations (IPs)](#identifying-same-user-login-from-different-locations-ips)
+    * [User Impersonation](#user-impersonation)
 * [Authorizing a user](#authorizing-a-user)
     * [Claims](#claims)
     * [Roles](#roles)
@@ -733,6 +734,20 @@ Some applications blocks or notify same user logins from differents IPs. It's a 
 This feature is provided by [UserLoginIp](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/UserLoginIp.cs), [UserLoginIPService](./AspNetCoreIdentityLab.Application/Services/UserLoginIPService.cs) and [UserLoginIPMapper](./AspNetCoreIdentityLab.Persistence/Mappers/UserLoginIPMapper.cs) classes.
 
 Basically the application compares the IP of login with the IP of the last login saved in `UserLoginIp` table. If the IP's are different an email is sent to user.
+
+### User Impersonation
+
+Impersonation is when an admin user is logged in with the same privileges as a user, but without knowing their password or other credentials. This means that the support user will experience the system as if they are the impersonated user. User impersonation **is useful in SaaS systems** for investigating/fixing problems that customers encounter.
+
+The impersonation is based on choose some user and to sign with this user in application. For this a list of users was added in the [Home page](./AspNetCoreIdentityLab.Application/Views/Home/Index.cshtml). With this list is possible choose an user for impersonate.
+
+The [Home controller](./AspNetCoreIdentityLab.Application/Controllers/HomeController.cs) has two actions called `ImpersonateUser` and `StopImpersonation` that are self explanatory.
+
+Below is shown an image that showns impersonation feature: 
+
+![image info](./readme-pictures/user-impersonation.jpg)
+
+In addition, a class called [ImpersonateExtensions](./AspNetCoreIdentityLab.Application/Tools/ImpersonateExtensions.cs) was added to generate the profile name of the logged in user. To complete the solution, a configuration had to be done in `Startup.cs` to avoid ending impersonation in the SecurityStampToken update.
 
 ## Authorizing a user
 
