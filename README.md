@@ -76,7 +76,7 @@ What needs to be installed on the machine to extend and debug the project:
 
 * Install and/or configure all the prerequisites mentioned above;
 * Clone the repository on the local machine;
-* Create the databases used in the application: AspNetCoreIdentityLab;
+* Create the databases used in the application: AspNetCoreIdentityLab, AspNetCoreIdentityLabCustomModel and Authentication;
 * Download Nuget dependencies for the solution in Visual Studio;
 * Run the migrations to the desired database with the command: Update-Database -Context [ClassName of context];
 * Execute the AspNetCoreIdentityLab.Application MVC project;
