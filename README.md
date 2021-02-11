@@ -94,13 +94,13 @@ Below are listed which requirements the solution meets:
 	Account confirmation by email;
     Explore IdentityOptions;
     Remember, recover and reset password;
+    Password Hashing;
     Password Rotation;
     Captchas;
     Two Factor Authentication (2FA);
-    Use of authentication providers (Google, Facebook, Github, Microsoft, Twitter);
+    Use of authentication providers (Google, Facebook, etc);
     Block concurrent logins;
     Track logins of different ips;
-    Single SingOn / Windows authentication;
     Password Policy;
     Email and Username Policy;
 	Change database schema;
@@ -108,12 +108,11 @@ Below are listed which requirements the solution meets:
 	Custom storage providers;
     Create an Authentication API;
     Logging;
-    WS-Federation;
     Roles;
     Claims;
     Policies;
     User groups;
-    Authorization levels (Groups of functionalities, functionalities, functions);
+    Dynamic Authorization (Groups of features, features and functions);
     Create an Authorization API;
 
 ## Identity Default Database Model
