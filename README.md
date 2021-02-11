@@ -222,9 +222,11 @@ The main namespaces are: `DataTransferObjects`, `EntityFrameworkContexts` and `M
 
 ## Identity Basic Configuration 
 
+In this section will be showed the options and basic instructions to configure the ASP.NET Core Identity in a project.
+
 ### IdentityOptions
 
-Represents the options that you can use to configure Asp Net Core Identity.
+Represents the options that you can use to configure ASP.NET Core Identity.
 
 **ClaimsIdentity**
 * `RoleClaimType`: sets the ClaimType used for a Role claim;
