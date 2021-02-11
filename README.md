@@ -460,6 +460,8 @@ In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Accou
 
 ## Authenticating a user
 
+Authentication is the process that answer the question, **Who are you in the application?** In this section will be shown important topics about user authentication using ASP.NET Core Identity.
+
 ### Password Hashing
 
 The default password hasher for ASP.NET Core Identity uses **PBKDF2** algorithm. The implementation uses the [ASP.NET Core Data Protection](https://docs.microsoft.com/en-us/aspnet/core/security/data-protection/introduction?view=aspnetcore-3.1) cryptographic API.
