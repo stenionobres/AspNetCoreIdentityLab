@@ -171,6 +171,8 @@ The solution `AspNetCoreIdentityLab` is divided into three projects: `AspNetCore
 
 It's a `ASP.NET Core Web Application` with **API template** which has the responsibility to exposes api services for authentication and authorization.
 
+![image info](./readme-pictures/aspnetcoreidentitylab-api.jpg)
+
 The main namespaces are: `Controllers`, `DynamicAuthorization`, `Jwt`, `Model` and `Services`.
 
 * [Controllers](./AspNetCoreIdentityLab.Api/Controllers): classes that represent the api endpoints for authentication and authorization.
@@ -186,6 +188,8 @@ The main namespaces are: `Controllers`, `DynamicAuthorization`, `Jwt`, `Model` a
 ### AspNetCoreIdentityLab-Application
 
 It's an `ASP.NET Core Web Application` with **MVC template** which has the responsibility to maintain the features of user registration, user login, Two-Factor Authentication features, etc.
+
+![image info](./readme-pictures/aspnetcoreidentitylab-application.jpg)
 
 The main namespaces are: `Pages`, `Controllers`, `CustomAuthorization`, `Models`, `Services` and `Views`.
 
@@ -204,6 +208,8 @@ The main namespaces are: `Pages`, `Controllers`, `CustomAuthorization`, `Models`
 ### AspNetCoreIdentityLab-Persistence
 
 It is a `.Net Core Class Library` which has the responsibility to maintain the EF Core configurations and carry out the operations in the databases.
+
+![image info](./readme-pictures/aspnetcoreidentitylab-persistence.jpg)
 
 The main namespaces are: `DataTransferObjects`, `EntityFrameworkContexts` and `Migrations`.
 
