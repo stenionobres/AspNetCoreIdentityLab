@@ -61,7 +61,7 @@ After the case studies, the main conclusions were documented in this file and se
 * [Logging](#logging)
 * Fast tips
 * Lessons learned
-* References used
+* [References used](#references-used)
 * [Authors](#authors)
 
 ## Prerequisites
@@ -1292,6 +1292,26 @@ In the [appsettings.json](./AspNetCoreIdentityLab.Application/appsettings.json) 
 ![image info](./readme-pictures/identityproject-logging.jpg)
 
 For more information please see the [documentation](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1).
+
+## References used
+
+* [ASP.NET Core Authentication Official documentation](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)
+
+* [ASP.NET Core Authorization Official documentation](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/introduction?view=aspnetcore-3.1)
+
+* [Pluralsight - Authentication and Authorization in ASP.NET Core](https://www.pluralsight.com/courses/authentication-authorization-aspnet-core)
+
+* [Pluralsight - ASP.NET Core Identity Deep Dive](https://www.pluralsight.com/courses/aspdotnet-core-identity-deep-dive)
+
+* [Balta.io - Introdução ao ASP.NET Core Identity](https://balta.io/cursos/introducao-ao-aspnet-core-identity)
+
+* [ASP.NET Core in Action book](https://livebook.manning.com/book/asp-net-core-in-action/about-this-book/)
+
+* [John P Smith Blog - Authorization in ASP.NET Core](https://www.thereformedprogrammer.net/a-better-way-to-handle-authorization-in-asp-net-core/)
+
+* [Chsakell's Blog - ASP.NET Core Identity Series](https://chsakell.com/2018/04/28/asp-net-core-identity-series-getting-started/)
+
+* [Youtube - ASP.NET Core Identity tutorial](https://www.youtube.com/playlist?list=PLuIbNTr1XSlY8YmCyCfB4LCfkf4cl133b)
 
 ## Authors
 
