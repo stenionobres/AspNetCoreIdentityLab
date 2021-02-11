@@ -118,7 +118,7 @@ Below are listed which requirements the solution meets:
 
 ## Identity Default Database Model
 
-The Asp Net Core Identity default database consists of the following entity types:
+The ASP.NET Core Identity default database consists of the following entity types:
 
 |**Entity Name**    |**Description**                                               |
 |-------------------|--------------------------------------------------------------|
@@ -148,7 +148,7 @@ The solution `AspNetCoreIdentityLab` is divided into three projects: `AspNetCore
 
 >Net Core 3.1
 
->[Asp Net Core Identity UI 3.1.1](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.UI/3.1.1)
+>[ASP.NET Core Identity UI 3.1.1](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.UI/3.1.1)
 
 >[VisualStudio Web CodeGeneration Design 3.1.4](https://www.nuget.org/packages/Microsoft.VisualStudio.Web.CodeGeneration.Design/3.1.4)
 
@@ -271,7 +271,7 @@ Represents the options that you can use to configure ASP.NET Core Identity.
 
 ### Add Identity to new project
 
-To use Asp Net Core Identity in a new project some settings need to be made during and after creating the project.
+To use ASP.NET Core Identity in a new project some settings need to be made during and after creating the project.
 
 An **Asp Net Core Web Application** project need to be created with the image options:
 
@@ -323,8 +323,8 @@ How was said the [AspNetCoreIdentityLab.Persistence](./AspNetCoreIdentityLab.Per
 
 ### Add Identity to existing MVC project
 
-* Add [Asp Net Core Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity) to project;
-* Add [Asp Net Core Identity Entity Framework Core](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore) to project;
+* Add [ASP.NET Core Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity) to project;
+* Add [ASP.NET Core Identity Entity Framework Core](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore) to project;
 * Add [Entity Framework Core SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer) to project;
 * Add [Entity Framework Core Tools](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools) to project;
 * Add [User model](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/User.cs) to project;
@@ -382,7 +382,7 @@ These classes are responsible to manager all process of store users, authenticat
 
 ## Registering an user
 
-To register an user on Asp Net Core Identity the `UserManager` class instance with `CreateAsync` method must be used. 
+To register an user on ASP.NET Core Identity the `UserManager` class instance with `CreateAsync` method must be used. 
 
 ``` C#
 var user = new User { UserName = "Username", Email = "Email" };
@@ -397,7 +397,7 @@ The username field can be filled with an email or alphanumeric username, example
 
 ### How to customize user atributes?
 
-Asp Net Core Identity provides resources to customize user atributes. For this, the user model must be extended. The example below shows an `Occupation` custom field:
+ASP.NET Core Identity provides resources to customize user atributes. For this, the user model must be extended. The example below shows an `Occupation` custom field:
 
 ``` C#
 public class User : IdentityUser<int>
@@ -418,7 +418,7 @@ The custom rule is configured on `ConfigureServices` method in [Startup](./AspNe
 
 ### Account confirmation by email
 
-Asp Net Core Identity provides account confirmation by email, for this some configurations are needed.
+ASP.NET Core Identity provides account confirmation by email, for this some configurations are needed.
 In the first the `SignIn` options on `IdentityOptions` should be changed.
 
 ``` C#
@@ -485,7 +485,7 @@ Password rotation refers to the changing/resetting of a password(s). Limiting th
 
 The frequency of rotation should vary based on the password age, usage, and security importance. For instance, a password for a standard user account may only require rotation at `60-day intervals`, a process that can be forced through password expiration.
 
-The Asp.Net Core Identity **don't implements Password Rotation by default** at the moment. This [github issue](https://github.com/dotnet/aspnetcore/issues/5716) talks about the subject.
+The ASP.NET Core Identity **don't implements Password Rotation by default** at the moment. This [github issue](https://github.com/dotnet/aspnetcore/issues/5716) talks about the subject.
 
 ### Concurrent login session
 
@@ -548,7 +548,7 @@ var result = await _signInManager.PasswordSignInAsync(Input.EmailOrUsername,
 
 ### Google reCaptcha
 
-It's possible to use the **Google reCaptcha** in a Asp Net Core Identity form login. For this it's necessary to get the Google api keys and configure the reCaptcha in Google account.
+It's possible to use the **Google reCaptcha** in a ASP.NET Core Identity form login. For this it's necessary to get the Google api keys and configure the reCaptcha in Google account.
 
 First, you need to get the api keys filling this [form](https://www.google.com/recaptcha/admin/create). Select the `reCAPTCHA v2` option and add the `locahost` term in domain section. This is useful for tests in development mode.
 
@@ -595,7 +595,7 @@ The scaffolded razor pages that can be used on project for 2FA are showed below:
 
 ![image info](./readme-pictures/2fa-identity-pages.jpg)
 
-These pages are useful to customize the default code or to provide some examples of how to use Asp.Net Core Identity resources.
+These pages are useful to customize the default code or to provide some examples of how to use ASP.NET Core Identity resources.
 
 The page [EnableAuthenticator](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Manage/EnableAuthenticator.cshtml) provides the token to be inserted on two factor authenticator app. However, an important feature don't exists by default that is the Qrcode to be scanned by app.
 
