@@ -487,6 +487,10 @@ In the [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Accou
 
 Authentication is the process that answer the question, **Who are you in the application?** In this section will be shown important topics about user authentication using ASP.NET Core Identity.
 
+The source code for authentication was based on scaffolded page below and can be seen in the classes [Login.cshtml](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml) and [Login.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml.cs).
+
+![image info](./readme-pictures/scaffolded-identity-loginprocess.jpg)
+
 ### Password Hashing
 
 The default password hasher for ASP.NET Core Identity uses **PBKDF2** algorithm. The implementation uses the [ASP.NET Core Data Protection](https://docs.microsoft.com/en-us/aspnet/core/security/data-protection/introduction?view=aspnetcore-3.1) cryptographic API.
