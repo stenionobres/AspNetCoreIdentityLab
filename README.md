@@ -414,6 +414,12 @@ if (result.Succeeded)
 
 The username field can be filled with an email or alphanumeric username, example: username@email.com or exampleofusername. **However the use of an email as username is most recommended**. The purpose of an email as username is to facilitate password recover.
 
+A simple way to access a source code of register process is generate a scaffolded page. The image below shown the option for generate the register page:
+
+![image info](./readme-pictures/scaffolded-identity-register-process.jpg)
+
+It's important to say that is necessary choose the DbContext to generate the page. The source code generated can be accessed on [Register.cshtml](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml) and [Register.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml.cs).
+
 ### How to customize user atributes?
 
 ASP.NET Core Identity provides resources to customize user atributes. For this, the user model must be extended. The example below shows an `Occupation` custom field:
