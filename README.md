@@ -27,6 +27,7 @@ After the case studies, the main conclusions were documented in this file and se
 * [Identity Database Customization](#identity-database-customization)
 * [Entity Framework x Another persistence](#entity-framework-x-another-persistence)
 * [SignManager x UserManager x RoleManager](#signmanager-x-usermanager-x-rolemanager)
+* [Identity Scaffolded Pages](#identity-scaffolded-pages)
 * [Registering an user](#registering-an-user)
     * [How to customize user atributes?](#how-to-customize-user-atributes?)
     * [Custom register rules](#custom-register-rules)
@@ -383,6 +384,20 @@ These classes are responsible to manager all process of store users, authenticat
 * **SignManager**: provides the APIs for user sign in;
 * **UserManager**: provides the APIs for managing user in a persistence store;
 * **RoleManager**: provides the APIs for managing roles in a persistence store.
+
+## Identity Scaffolded Pages
+
+One way to access code examples of many ASP.NET Core Identity features is to use the **Scaffolded Items**. This resource provides source code and pages that implements many process like: register user, forgot password, change password, etc.
+
+The images below shown how to access this resource:
+
+![image info](./readme-pictures/scaffolded-menu.jpg)
+
+![image info](./readme-pictures/scaffolded-identity-item.jpg)
+
+![image info](./readme-pictures/scaffolded-identity-pages.jpg)
+
+This options can be useful for knows how to many of these process are implemented using ASP.NET Core Identity. Many features presented in this guide used scaffolded pages. The generated code can be accessed in the namespace [Account](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account).
 
 ## Registering an user
 
