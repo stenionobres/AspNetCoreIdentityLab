@@ -328,7 +328,6 @@ How was said the [AspNetCoreIdentityLab.Persistence](./AspNetCoreIdentityLab.Per
 
 ### Add Identity to existing MVC project
 
-* Add [ASP.NET Core Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity) to project;
 * Add [ASP.NET Core Identity Entity Framework Core](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore) to project;
 * Add [Entity Framework Core SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer) to project;
 * Add [Entity Framework Core Tools](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools) to project;
