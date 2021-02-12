@@ -33,6 +33,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Custom register rules](#custom-register-rules)
     * [Account confirmation by email](#account-confirmation-by-email)
 * [Authenticating a user](#authenticating-a-user)
+    * [Remember x Recover x Reset password](#remember-x-recover-x-reset-password)
     * [Password Hashing](#password-hashing)
     * [Password Rotation](#password-rotation)
     * [Concurrent login session](#concurrent-login-session)
@@ -490,6 +491,14 @@ Authentication is the process that answer the question, **Who are you in the app
 The source code for authentication was based on scaffolded page below and can be seen in the classes [Login.cshtml](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml) and [Login.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml.cs).
 
 ![image info](./readme-pictures/scaffolded-identity-loginprocess.jpg)
+
+### Remember x Recover x Reset password
+
+The scaffolded pages highlighted in the image below is a good example of password manager source code using ASP.NET Core Identity.
+
+![image info](./readme-pictures/scaffolded-identity-passwordprocess.jpg)
+
+The related source code is in files with the same name inside the namespace [Account](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account). 
 
 ### Password Hashing
 
