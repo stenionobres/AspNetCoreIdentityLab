@@ -354,7 +354,7 @@ It's possible to use the EF Core Fluent API and DBContext's configuration to cha
 
 For this, custom table names and schema are shown in [this DBContext](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts/AspNetCoreIdentityLabCustomModelDbContext.cs). A [related migration](./AspNetCoreIdentityLab.Persistence/Migrations/AspNetCoreIdentityLabCustomModel/20210112191330_DatabaseInitialStructure.cs) was created for generate a initial database structure.
 
-To use different databases it's possible too. An example is shown in [Authentication API]() and [Authorization API]() that uses different databases with different DBContexts to store the data.
+To use different databases it's possible too. An example is shown in [Authentication API](#authentication-rest-api) and [Authorization API](#authorization-rest-api) that uses different databases with different DBContexts to store the data.
 
 Other information can be founded in this [excellent guide](https://docs.microsoft.com/en-US/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-3.1) to customize ASP.NET Core Identity database. 
 
