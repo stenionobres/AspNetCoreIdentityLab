@@ -755,7 +755,7 @@ foreach (var token in info.AuthenticationTokens)
 
 Some applications blocks or notify same user logins from differents IPs. It's a security rule.
 
-This feature is provided by [UserLoginIp](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/UserLoginIp.cs), [UserLoginIPService](./AspNetCoreIdentityLab.Application/Services/UserLoginIPService.cs) and [UserLoginIPMapper](./AspNetCoreIdentityLab.Persistence/Mappers/UserLoginIPMapper.cs) classes.
+An example of this feature is provided by [UserLoginIp](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/UserLoginIp.cs), [UserLoginIPService](./AspNetCoreIdentityLab.Application/Services/UserLoginIPService.cs) and [UserLoginIPMapper](./AspNetCoreIdentityLab.Persistence/Mappers/UserLoginIPMapper.cs) classes.
 
 Basically the application compares the IP of login with the IP of the last login saved in `UserLoginIp` table. If the IP's are different an email is sent to user.
 
