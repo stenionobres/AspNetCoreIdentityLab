@@ -14,6 +14,11 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
 * [Como iniciar?](#como-iniciar)
 * [Requisitos do projeto](#requisitos-do-projeto)
 * [Modelo padrão de banco de dados](#modelo-padrao-de-banco-de-dados)
+* [Estrutura do projeto](#estrutura-do-projeto)
+    * [Versões utilizadas](#versões-utilizadas)
+    * [AspNetCoreIdentityLab-Api](#AspNetCoreIdentityLab-Api)
+    * [AspNetCoreIdentityLab-Application](#AspNetCoreIdentityLab-Application)
+    * [AspNetCoreIdentityLab-Persistence](#AspNetCoreIdentityLab-Persistence)
 
 ## Pré-requisitos
 
@@ -89,3 +94,83 @@ Os tipos de entidade estão relacionados entre si das seguintes maneiras:
 * Cada usuário pode ter várias Roles associadas e cada Role pode ser associada a vários usuários. Este é um relacionamento muitos para muitos que requer uma tabela associativa no banco de dados. A tabela associativa é representada pela entidade AspNetUserRoles.
 
 ![image info](./readme-pictures/aspnet-core-identity-default-database-model.jpg)
+
+## Estrutura do projeto
+
+A solução `AspNetCoreIdentityLab` é dividida em três projetos: `AspNetCoreIdentityLab.Api`, `AspNetCoreIdentityLab.Application` e `AspNetCoreIdentityLab.Persistence`. Nas próximas seções os projetos são detalhados.
+
+### Versões utilizadas
+
+>Net Core 3.1
+
+>[ASP.NET Core Identity UI 3.1.1](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.UI/3.1.1)
+
+>[VisualStudio Web CodeGeneration Design 3.1.4](https://www.nuget.org/packages/Microsoft.VisualStudio.Web.CodeGeneration.Design/3.1.4)
+
+>[Entity Framework Core 3.1.7](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore/3.1.7)
+
+>[Entity.Framework.Core.Sql.Server 3.1.7](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer/3.1.7)
+
+>[Microsoft.EntityFrameworkCore.Tools 3.1.7](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools/3.1.7)
+
+>[Microsoft.Extensions.Logging.Console 3.1.7](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Console/3.1.7)
+
+>[Microsoft.AspNetCore.Authentication.Facebook 3.1.10](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Facebook/3.1.10)
+
+>[Microsoft.AspNetCore.Authentication.Google 3.1.10](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google/3.1.10)
+
+>[Dapper 2.0.35](https://www.nuget.org/packages/Dapper/2.0.35)
+
+>[Microsoft.AspNetCore.Authentication.JwtBearer 3.1.11](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer/3.1.11)
+
+### AspNetCoreIdentityLab-Api
+
+É uma `ASP.NET Core Web Application` com **API template** que tem a responsabilidade de expor uma api rest para autenticação e autorização.
+
+![image info](./readme-pictures/aspnetcoreidentitylab-api.jpg)
+
+A principais namespaces são: `Controllers`, `DynamicAuthorization`, `Jwt`, `Model` e `Services`.
+
+* [Controllers](./AspNetCoreIdentityLab.Api/Controllers): classes que representam os endpoints da api de autenticação e autorização.
+
+* [DynamicAuthorization](./AspNetCoreIdentityLab.Api/DynamicAuthorization): classes usadas para modelar a autorização dinâmica que podem ser usadas para autorizar módulos, submódulos e funcionalidades sem a necessidade de criar novas políticas no código-fonte.
+
+* [Jwt](./AspNetCoreIdentityLab.Api/Jwt): classes responsáveis por gerar o JWT Token.
+
+* [Model](./AspNetCoreIdentityLab.Api/Model): classes que representam os dados da api usados nos controllers.
+
+* [Services](./AspNetCoreIdentityLab.Api/Services): classes que encapsulam regras mais complexas usadas nos controllers.
+
+### AspNetCoreIdentityLab-Application
+
+É uma `ASP.NET Core Web Application` com **MVC template** que tem a responsabilidade de manter as funcionalidade de registro de usuário, login de usuário, Two-Factor Authentication (2FA), etc.
+
+![image info](./readme-pictures/aspnetcoreidentitylab-application.jpg)
+
+As principais namespaces são: `Pages`, `Controllers`, `CustomAuthorization`, `Models`, `Services` e `Views`.
+
+* [Pages](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages): razor pages com as funcionalidades do ASP.NET Core Identity. Estas funcionalides foram geradas pela ferramenta scaffold do ASP.NET Core;
+
+* [Controllers](./AspNetCoreIdentityLab.Application/Controllers): alguns controladores usados para autorização e impersonation user;
+
+* [CustomAuthorization](./AspNetCoreIdentityLab.Application/CustomAuthorization): classes usadas para criar políticas de autorização customizadas e atributos de autorização customizados;
+
+* [Models](./AspNetCoreIdentityLab.Application/Models): models usados no impersonation user;
+
+* [Services](./AspNetCoreIdentityLab.Application/Services): classes que implementam regras mais complexas usadas nos controladores;
+
+* [Views](./AspNetCoreIdentityLab.Application/Views): algumas views compartilhadas usadas na aplicação.
+
+### AspNetCoreIdentityLab-Persistence
+
+É uma `.Net Core Class Library` que tem a responsabilidade de manter as configurações do EF Core e realizar as operações nas bases de dados.
+
+![image info](./readme-pictures/aspnetcoreidentitylab-persistence.jpg)
+
+As principais namespaces são: `DataTransferObjects`, `EntityFrameworkContexts` e `Migrations`.
+
+* [DataTransferObjects](./AspNetCoreIdentityLab.Persistence/DataTransferObjects): classes que representam os models que mapeiam as tabelas em cada banco de dados.
+
+* [EntityFrameworkContexts](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts): classes que configuram a conexão com os banco de dados. Neste estudo de caso, três bancos de dados são utilizados.
+
+* [Migrations](./AspNetCoreIdentityLab.Persistence/Migrations): classes que representam as migrações que serão aplicadas em cada banco de dados.
