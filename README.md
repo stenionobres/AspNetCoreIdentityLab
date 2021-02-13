@@ -63,7 +63,6 @@ After the case studies, the main conclusions were documented in this file and se
     * [Resource class structure](#resource-class-structure)
     * [Policy database structure](#policy-database-structure)
 * [Logging](#logging)
-* Fast tips
 * Lessons learned
 * [References used](#references-used)
 * [Authors](#authors)
