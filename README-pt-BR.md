@@ -13,6 +13,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
 * [Pré-requisitos](#pre-requisitos)
 * [Como iniciar?](#como-iniciar)
 * [Requisitos do projeto](#requisitos-do-projeto)
+* [Modelo padrão de banco de dados](#modelo-padrao-de-banco-de-dados)
 
 ## Pré-requisitos
 
@@ -64,3 +65,27 @@ Abaixo estão listados quais requisitos a solução atende:
     Grupos de usuários;
     Autorizações dinâmicas (Módulos, submódulos e funcionalidades);
     API de autorização;
+
+## Modelo padrão de banco de dados
+
+O banco de dados padrão do ASP.NET Core Identity consiste nas seguintes entidades:
+
+|**Entidade**       |**Descrição**                                                     |
+|-------------------|------------------------------------------------------------------|
+|  AspNetUsers      | Representa o usuário                                             |
+|  AspNetRoles      | Representa uma Role                                              |
+|  AspNetUserClaims | Representa uma Claim que o usuário possui                        |
+|  AspNetUserTokens | Representa um token de autenticação para o usuário               |
+|  AspNetUserLogins | Associa o usuário com um login                                   |
+|  AspNetRoleClaims | Representa uma Claim relacionada a todos os usuários de uma Role |
+|  AspNetUserRoles  | Uma entidade associativa que relaciona usuários e Roles          |
+
+Os tipos de entidade estão relacionados entre si das seguintes maneiras:
+
+* Cada usuário pode ter vários UserClaims;
+* Cada usuário pode ter vários UserLogins;
+* Cada usuário pode ter vários UserTokens;
+* Cada Role pode ter várias RoleClaims associados;
+* Cada usuário pode ter várias Roles associadas e cada Role pode ser associada a vários usuários. Este é um relacionamento muitos para muitos que requer uma tabela associativa no banco de dados. A tabela associativa é representada pela entidade AspNetUserRoles.
+
+![image info](./readme-pictures/aspnet-core-identity-default-database-model.jpg)
