@@ -13,7 +13,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
 * [Pré-requisitos](#pre-requisitos)
 * [Como iniciar?](#como-iniciar)
 * [Requisitos do projeto](#requisitos-do-projeto)
-* [Modelo padrão de banco de dados](#modelo-padrao-de-banco-de-dados)
+* [Modelo padrão de banco de dados](#modelo-padrão-de-banco-de-dados)
 * [Estrutura do projeto](#estrutura-do-projeto)
     * [Versões utilizadas](#versões-utilizadas)
     * [AspNetCoreIdentityLab-Api](#AspNetCoreIdentityLab-Api)
