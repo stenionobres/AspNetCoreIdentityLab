@@ -19,6 +19,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [AspNetCoreIdentityLab-Api](#AspNetCoreIdentityLab-Api)
     * [AspNetCoreIdentityLab-Application](#AspNetCoreIdentityLab-Application)
     * [AspNetCoreIdentityLab-Persistence](#AspNetCoreIdentityLab-Persistence)
+* [Autenticação x Autorização](#autenticação-x-autorização)
 
 ## Pré-requisitos
 
@@ -174,3 +175,9 @@ As principais namespaces são: `DataTransferObjects`, `EntityFrameworkContexts` 
 * [EntityFrameworkContexts](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts): classes que configuram a conexão com os banco de dados. Neste estudo de caso, três bancos de dados são utilizados.
 
 * [Migrations](./AspNetCoreIdentityLab.Persistence/Migrations): classes que representam as migrações que serão aplicadas em cada banco de dados.
+
+## Autenticação x Autorização
+
+>**Autenticação:** O processo que responde à pergunta: quem é você no aplicativo?
+
+>**Autorização:** O processo que responde à pergunta: O que você pode fazer no aplicativo?
