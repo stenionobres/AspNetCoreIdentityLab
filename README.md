@@ -289,20 +289,20 @@ After that the database connection string need be changed in `appsettings.json` 
 
 However the author **recommends separate the database access logic from application logic**. The objective is better organize the solution aplying the [SRP principle](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html).
 
-For this a data access project need to be created and the application project with Identity must use this data access layer.
+For this a data access project need to be created and the application project with ASP.NET Core Identity must use this data access layer.
 
 To use a separeted data access project it's necessary add a [project of class library type](./AspNetCoreIdentityLab.Persistence). This project will do access on database and contains the Entity Framework dependencies or another persistence as well.
 
 The solution in this repository uses a separated data access project so it is a good example to use. However to simplify the solution configuration some steps are listed below:
 
-* Remove **ApplicationDbContext** from Asp Net Core MVC project;
-* Remove **Migrations** folder from Asp Net Core MVC project;
-* Remove **Data** folder from Asp Net Core MVC project;
+* Remove **ApplicationDbContext** from ASP.NET Core MVC project;
+* Remove **Migrations** folder from ASP.NET Core MVC project;
+* Remove **Data** folder from ASP.NET Core MVC project;
 * Remove **Connection Strings** from `appsettings.json` file;
 * Add **Data Access** class library project and your [dependencies](#used-packages) to solution;
-* Add **Project Reference** to persistence project created above on Asp Net Core MVC project;
+* Add **Project Reference** to persistence project created above on ASP.NET Core MVC project;
 * Change **DbContext configuration** on `ConfigureServices` in `Startup.cs` class to use persistence project DbContext; 
-* Add **User model** inheriting of Asp Net Core `IdentityUser` class**;
+* Add **User model** inheriting of ASP.NET Core `IdentityUser` class**;
 * Run Add-Migration command to create Identity migration;
 * Run Update-Database to create [Identity database structure](#identity-default-database-model);
 
