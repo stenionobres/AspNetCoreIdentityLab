@@ -27,6 +27,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
 * [Customização do banco de dados do Identity](#customização-do-banco-de-dados-do-identity)
 * [Entity Framework x Outra persistência](#entity-framework-x-outra-persistência)
 * [SignManager x UserManager x RoleManager](#signmanager-x-usermanager-x-rolemanager)
+* [Identity Scaffolded Pages](#identity-scaffolded-pages)
 
 ## Pré-requisitos
 
@@ -347,3 +348,17 @@ Essas classes são responsáveis por gerenciar todo o processo de persistência 
 * **SignManager**: fornece as APIs para login do usuário;
 * **UserManager**: fornece as APIs para gerenciar o usuário e sua persistência;
 * **RoleManager**: fornece as APIs para gerenciar Roles e sua persistência.
+
+## Identity Scaffolded Pages
+
+Uma maneira de acessar muitos exemplos de código do ASP.NET Core Identity é usar os **Scaffolded Items**. Este recurso fornece código-fonte e páginas que implementam diversos processos como: registrar usuário, esquecer a senha, alterar a senha, etc.
+
+As imagens abaixo mostram como acessar este recurso:
+
+![image info](./readme-pictures/scaffolded-menu.jpg)
+
+![image info](./readme-pictures/scaffolded-identity-item.jpg)
+
+![image info](./readme-pictures/scaffolded-identity-pages.jpg)
+
+Essas opções podem ser úteis para saber como muitos desses processos são implementados usando o ASP.NET Core Identity. Muitos dos recursos apresentados neste guia usaram páginas de scaffold. O código gerado pode ser acessado no namespace [Account](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account).
