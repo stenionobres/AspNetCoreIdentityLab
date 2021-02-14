@@ -25,6 +25,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Identity em um projeto novo](#identity-em-um-projeto-novo)
     * [Identity em um projeto MVC existente](#identity-em-um-projeto-mvc-existente)
 * [Customização do banco de dados do Identity](#customização-do-banco-de-dados-do-identity)
+* [Entity Framework x Outra persistência](#entity-framework-x-outra-persistência)
 
 ## Pré-requisitos
 
@@ -319,3 +320,19 @@ Para isso, os nomes das tabelas e esquema personalizados são mostrados [neste D
 Também é possível usar bancos de dados diferentes. Um exemplo é mostrado em [API de autenticação](#autenticação-rest-api) e [API de autorização](#autorização-rest-api) que usa bancos de dados diferentes com DBContexts diferentes para armazenar os dados.
 
 Outras informações para personalizar o banco de dados do ASP.NET Core Identity podem ser encontradas neste [excelente guia](https://docs.microsoft.com/en-US/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-3.1).
+
+## Entity Framework x Outra persistência
+
+A maior parte do conteúdo sobre ASP.NET Core Identity recomenda o uso de [Entity Framework Core](https://github.com/stenionobres/EntityFrameworkCoreLab) como mecanismo de persistência.
+
+No entanto, é possível usar outro mecanismo de persistência para manipular os dados do usuário. Para isso é necessário implementar algumas interfaces nomeadas com o sufixo [Store](https://github.com/dotnet/aspnetcore/tree/master/src/Identity/Extensions.Core/src): IUserStore, IUserLoginStore, IUserClaimStore, IUserPasswordStore, IStampSecurity , IUserEmailStore, IUserLockoutStore, IUserPhoneNumberStore, IQueryableUserStore, IUserTwoFactorStore, IUserAuthenticationTokenStore, IUserAuthenticatorKeyStore, IUserTwoFactorReceryCodeStore, IRoleStoreClaimorecoveryCodeStore, IRoleStoreClaimorecoveryCodeStore, IRoleStoreClaimorecoveryCodeStore. Essas interfaces são usadas pelas classes **SignInManager**, **UserManager** e **RoleManager** para manipular os dados armazenados pelo ASP.NET Core Identity.
+
+Para exemplificar esse recurso uma implementação usando o micro-ORM [Dapper](https://github.com/StackExchange/Dapper) foi feita. Mas, outro mecanismo de persistência pode ser usado como [ADO.NET](https://docs.microsoft.com/en-US/dotnet/framework/data/adonet/ado-net-code-examples) or [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/).
+
+Para isso uma opção chamada `PersistenceWithDapper` foi adicionada em `appsettings.json`, quando o valor é verdadeiro as classes [UserStoreService](./AspNetCoreIdentityLab.Application/Services/UserStoreService.cs) e [UserStore](./AspNetCoreIdentityLab.Persistence/IdentityStores/UserStore.cs) são carregadas pela injeção de dependência do ASP.NET Core.
+
+Com base nisso, as classes `SignInManager` e` UserManager` podem usar a nova classe de persistência. É importante dizer que a classe `UserStoreService` não implementa todas as interfaces de armazenamento, **apenas as interfaces necessárias para o processo de registro e login do usuário**.
+
+Para mais detalhes sobre o design original no ASP.NET Core Identity as classes [UserStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/UserStoreBase.cs), [UserStore](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/EntityFrameworkCore/src/UserStore.cs), [RoleStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/RoleStoreBase.cs) and [RoleStore](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/EntityFrameworkCore/src/RoleStore.cs) podem ser verificadas.
+
+>Uma forma de facilitar a criação da estrutura de banco de dados, quando outro mecanismo de persistência for usado com um banco de dados relacional, é configurar o projeto com Entity Framework Core, gerar a migração, aplicar a migração com tabelas e campos no banco de dados e depois remover a dependência com o EF Core para só então usar outro mecanismo de persistência como mostrado acima.
