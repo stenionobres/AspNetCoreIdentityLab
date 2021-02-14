@@ -28,6 +28,10 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
 * [Entity Framework x Outra persistência](#entity-framework-x-outra-persistência)
 * [SignManager x UserManager x RoleManager](#signmanager-x-usermanager-x-rolemanager)
 * [Identity Scaffolded Pages](#identity-scaffolded-pages)
+* [Registrando um usuário](#registrando-um-usuário)
+    * [Como customizar atributos de usuário?](#como-customizar-atributos-de-usuário?)
+    * [Regras de registro customizadas](#regras-de-registro-customizadas)
+    * [Confirmação de conta por email](#confirmação-de-conta-por-email)
 
 ## Pré-requisitos
 
@@ -362,3 +366,86 @@ As imagens abaixo mostram como acessar este recurso:
 ![image info](./readme-pictures/scaffolded-identity-pages.jpg)
 
 Essas opções podem ser úteis para saber como muitos desses processos são implementados usando o ASP.NET Core Identity. Muitos dos recursos apresentados neste guia usaram páginas de scaffold. O código gerado pode ser acessado no namespace [Account](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account).
+
+## Registrando um usuário
+
+Para registrar um usuário com ASP.NET Core Identity uma instância da classe `UserManager` com o método `CreateAsync` deve ser usada.
+
+``` C#
+var user = new User { UserName = "Username", Email = "Email" };
+var result = await _userManager.CreateAsync(user, "Password");
+if (result.Succeeded)
+{
+
+}
+```
+
+O campo de nome de usuário pode ser preenchido com um e-mail ou nome de usuário alfanumérico, por exemplo: username@email.com ou exampleofusername. **No entanto, o uso de um e-mail como nome de usuário é mais recomendado**. O objetivo de um e-mail como nome de usuário é facilitar a recuperação da senha e notificar o usuário quando preciso.
+
+Uma maneira simples de acessar um código-fonte do processo de registro é gerar uma página scaffold. A imagem abaixo mostra a opção para gerar a página de registro:
+
+![image info](./readme-pictures/scaffolded-identity-register-process.jpg)
+
+É importante dizer que é necessário escolher o DbContext para gerar a página. O código fonte gerado pode ser acessado em [Register.cshtml](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml) e [Register.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml.cs).
+
+### Como customizar atributos de usuário?
+
+O ASP.NET Core Identity fornece recursos para personalizar os atributos do usuário. Para isso, o modelo do usuário deve ser estendido. O exemplo abaixo mostra o campo personalizado `Occupation`:
+
+``` C#
+public class User : IdentityUser<int>
+{
+    public string Occupation { get; set; }
+}
+```
+
+O campo `Occupation` é adicionado em conjunto com os campos padrões do usuário mostrados em [Modelo padrão de banco de dados](#modelo-padrão-de-banco-de-dados). Para aplicar o campo padrão ao banco de dados uma migração deve ser criada e executada.
+
+### Regras de registro customizadas
+
+Em muitos casos, é necessário adicionar regras personalizadas a serem aplicadas no registro do usuário. Essas regras mudam de negócio para negócio.
+
+Para adicionar regras personalizadas, a interface `IUserValidator <TUser>` deve ser usada. Um exemplo é mostrado na classe [CustomUserValidator](./AspNetCoreIdentityLab.Application/IdentityValidators/CustomUserValidator.cs). Este exemplo mostra uma regra de que o nome de usuário deve ter pelo menos 6 caracteres.
+
+A regra personalizada é configurada no método `ConfigureServices` na classe [Startup](./AspNetCoreIdentityLab.Application/Startup.cs).
+
+### Confirmação de conta por email
+
+ASP.NET Core Identity fornece confirmação de conta por email, para isso algumas configurações são necessárias. Inicialmente, as opções de `SignIn` em` IdentityOptions` devem ser alteradas.
+
+``` C#
+identityOptions.SignIn.RequireConfirmedAccount = true;
+identityOptions.SignIn.RequireConfirmedEmail = true;
+```
+
+Uma classe que implementa a interface `IEmailSender` deve ser criada. Esta classe deve usar algumas credenciais SMTP por exemplo [SendGrid](https://sendgrid.com/).
+
+Com o objetivo de apresentar uma ideia de desenvolvimento o [Gmail](https://www.hostinger.com.br/tutoriais/aprenda-a-utilizar-o-smtp-google/) SMTP foi usado nesse projeto. A classe [EmailSmtpSender](./AspNetCoreIdentityLab.Application/EmailSenders/EmailSmtpSender.cs) mostra como o email pode ser enviado.
+
+As credenciais do SMTP foram salvas usando o [Secret Manager tool](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-3.1&tabs=windows). Este recurso pode ser acessado com o botão direito no projeto AspNetCoreIdentityLab.Application opção **Manage User Secrets**, isto é mostrado na imagem abaixo:
+
+![image info](./readme-pictures/manage-user-secrets.jpg)
+
+O código fonte usa uma configuração no `secrets.json` como essa:
+
+``` JSON
+{
+    "EmailSmtpSender": {
+        "Host": "smtp.gmail.com",
+        "Port": 587,
+        "EnableSSL": true,
+        "UserName": "yourEmailAddress",
+        "Password": "yourEmailPassword"
+    }
+}
+```
+
+A configuração abaixo é usada no `ConfigureServices` método na classe `Startup`:
+
+``` C#
+services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfiguration());
+```
+
+Na classe [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml.cs) é apresentado um exemplo que usa as opções `SignIn` para enviar um email de confirmação de criação de conta.
+
+>É importante saber que se já houver contas criadas sem confirmação de e-mail e a configuração for alterada para account confirmation, essas contas não farão login. O valor do campo **EmailConfirmed na tabela AspNetUsers** deve ser alterado para o valor = 1.
