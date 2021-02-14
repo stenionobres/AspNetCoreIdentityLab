@@ -20,6 +20,10 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [AspNetCoreIdentityLab-Application](#AspNetCoreIdentityLab-Application)
     * [AspNetCoreIdentityLab-Persistence](#AspNetCoreIdentityLab-Persistence)
 * [Autenticação x Autorização](#autenticação-x-autorização)
+* [Configuração básica do Identity](#configuração-básica-do-identity) 
+    * [IdentityOptions](#IdentityOptions)
+    * [Identity em um projeto novo](#identity-em-um-projeto-novo)
+    * [Identity em um projeto MVC existente](#identity-em-um-projeto-mvc-existente)
 
 ## Pré-requisitos
 
@@ -181,3 +185,124 @@ As principais namespaces são: `DataTransferObjects`, `EntityFrameworkContexts` 
 >**Autenticação:** O processo que responde à pergunta: quem é você no aplicativo?
 
 >**Autorização:** O processo que responde à pergunta: O que você pode fazer no aplicativo?
+
+## Configuração básica do Identity
+
+Nesta seção serão mostradas as opções e instruções básicas para configurar o ASP.NET Core Identity em um projeto.
+
+### IdentityOptions
+
+Representa as opções que você pode usar para configurar o ASP.NET Core Identity.
+
+**ClaimsIdentity**
+* `RoleClaimType`: define a ClaimType usada pelas Roles;
+* `UserNameClaimType`: define a ClaimType usada pelo username;
+* `UserIdClaimType`: define a ClaimType usada pelo UserId;
+* `SecurityStampClaimType`: define a ClaimType usada pelo SecurityStamp;
+
+**User**
+* `AllowedUserNameCharacters`: configura o conjunto de caracteres que podem ser usadas na criação do username. Valor padrão: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+;
+* `RequireUniqueEmail`: define se um email único deve ser informado por um usuário na criação de uma conta. Valor padrão: false;
+
+**Password**
+* `RequiredLength`: define o tamanho mínimo para a senha. Valor padrão: 6;
+* `RequiredUniqueChars`: define o número mínimo de caracteres únicos que devem ser usadas na senha. Valor padrão: 1;
+* `RequireNonAlphanumeric`: define se caracteres especiais devem ser usados na senha. Valor padrão: true;
+* `RequireLowercase`: define se caracteres minúsculos devem ser usados na senha. Valor padrão: true;
+* `RequireUppercase`: define se caracteres maiúsculos devem ser usados na senha. Valor padrão: true;
+* `RequireDigit`: define se caracteres numéricos devem ser usados na senha. Valor padrão: true;
+
+**Lockout**
+* `AllowedForNewUsers`: define se um usuário novo pode ser bloqueado. Valor padrão: true;
+* `MaxFailedAccessAttempts`: define o número de tentativas de acesso malsucedidas permitidas antes de um usuário ser bloqueado. Valor padrão: 5;
+* `DefaultLockoutTimeSpan`: define o período de bloqueio para um usuário. Valor padrão: 5 minutos;
+
+**SignIn**
+* `RequireConfirmedEmail`: define se um e-mail confirmado é necessário para logar. Valor padrão: false;
+* `RequireConfirmedPhoneNumber`: define se um número de telefone confirmado é necessário para logar. Valor padrão: false;
+* `RequireConfirmedAccount`: define se uma conta confirmada é necessária para logar.. Valor padrão: false;
+
+**Tokens**
+* `ProviderMap`: define os valores que serão usados para construir UserTokenProviders com a chave usada como providerName. Valor padrão: Empty;
+* `EmailConfirmationTokenProvider`: define o nome do provider usado para gerar tokens **no processo de confirmação de email** do usuário. Valor padrão: Default;
+* `PasswordResetTokenProvider`: define o nome do provider usado para gerar tokens **no processo de troca de senha** do usuário. Valor padrão: Default;
+* `ChangeEmailTokenProvider`: define o nome do provider usado para gerar tokens **no processo de troca de email** do usuário. Valor padrão: Default;
+* `ChangePhoneNumberTokenProvider`: define o nome do provider usado para gerar tokens **no processo de troca de número de telefone** do usuário. Valor padrão: Phone;
+* `AuthenticatorTokenProvider`: define o nome do provider usado para **validar 2FA numbers**. Valor padrão: Authenticator;
+* `AuthenticatorIssuer`: define o nome do issuer usado para o authenticator issuer. Valor padrão: Microsoft.AspNetCore.Identity.UI;
+
+**Stores**
+* `MaxLengthForKeys`: se utiliza um número positivo, configura o tamanho usado no OnModelCreating para definir o tamanho máximo para propriedades do tipo chave, como o campo UserId;
+* `ProtectPersonalData`: define se todos os dados de identificação pessoal dos usuários devem ser protegidos;
+
+### Identity em um projeto novo
+
+Para usar o ASP.NET Core Identity em um novo projeto, algumas configurações precisam ser feitas durante e após a criação do projeto.
+
+Um **Asp Net Core Web Application** projeto precisa ser criado usando as opções da imagem:
+
+![image info](./readme-pictures/aspnet-core-webmvc-identityproject.jpg)
+
+Depois disso, a string de conexão do banco de dados precisa ser alterada em `appsettings.json` e as migrações executadas com o comando `Update-Database`.
+
+No entanto, o autor **recomenda separar a lógica de acesso ao banco de dados da lógica do aplicativo**. O objetivo é organizar melhor a solução de acordo com o [princípio SRP](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html).
+
+Para isso, um projeto de acesso a dados precisa ser criado e o projeto de aplicação com o ASP.NET Core Identity deve usar esta camada de acesso a dados.
+
+Para usar um projeto separado de acesso a dados é necessário adicionar um [projeto do tipo class library](./AspNetCoreIdentityLab.Persistence). Este projeto fará o acesso ao banco de dados e contém as dependências do Entity Framework ou outra persistência.
+
+A solução neste repositório usa um projeto de acesso a dados separado, por isso é um bom exemplo de uso. No entanto, para simplificar a configuração da solução, algumas etapas estão listadas abaixo:
+
+* Remova **ApplicationDbContext** do projeto ASP.NET Core MVC;
+* Remova a pasta **Migrations** do projeto ASP.NET Core MVC;
+* Remova a pasta **Data** do projeto ASP.NET Core MVC;
+* Remova **Connection Strings** do arquivo `appsettings.json`;
+* Adicionar um projeto de **acesso à dados** do tipo class library e suas [dependências](#versões-utilizadas) à solução;
+* Adicione uma **referência ao projeto** de persistência criado acima no projeto ASP.NET Core MVC;
+* Altere a configuração do **DbContext** em `ConfigureServices` na classe` Startup.cs` para usar o DbContext criado no projeto de persistência;
+* Adicionar um **user model** que herda da classe** ASP.NET Core `IdentityUser`;
+* Execute o comando Add-Migration para criar a migração;
+* Execute o comando Update-Database para criar a [estrutura de banco de dados do Identity](#modelo-padrão-de-banco-de-dados);
+
+** É possível alterar os tipos de chaves nos models User e IdentityRole. Isso é útil para alterar o tipo destes campos no banco de dados. Abaixo são mostrados exemplos dos models User e IdentityRole com chaves do tipo int.
+
+``` C#
+public class User : IdentityUser<int>
+{
+    
+}
+
+public class AspNetCoreIdentityLabDbContext : IdentityDbContext<User, IdentityRole<int>, int>
+{
+    private const string ConnectionString = "";
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (optionsBuilder.IsConfigured) return;
+
+        optionsBuilder.UseSqlServer(ConnectionString);
+    }
+}
+```
+
+Como foi dito o projeto [AspNetCoreIdentityLab.Persistence](./AspNetCoreIdentityLab.Persistence) neste repositório é um bom exemplo de projeto de persistência a ser seguido;
+
+### Identity em um projeto MVC existente
+
+* Adicionar [ASP.NET Core Identity Entity Framework Core](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore) ao projeto;
+* Adicionar [Entity Framework Core SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer) ao projeto;
+* Adicionar [Entity Framework Core Tools](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools) ao projeto;
+* Adicionar [User model](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/User.cs) ao projeto;
+* Adicionar [DbContext](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/AspNetCoreIdentityLabDbContext.cs) ao projeto;
+* Adicionar o código abaixo no método `ConfigureServices` na classe `Startup.cs`;
+``` C#
+services.AddDefaultIdentity<YourUserModel>()
+        .AddEntityFrameworkStores<YourDbContext>()
+        .AddDefaultTokenProviders();
+```
+* Adicionar o código abaixo no método `Configure` na classe `Startup.cs`;
+``` C#
+app.UseAuthentication();
+```
+* Executar o comando Add-Migration para criar a migração do Identity;
+* Executar o comando Update-Database para criar a [estrutura de banco de dados do Identity](#modelo-padrão-de-banco-de-dados);
