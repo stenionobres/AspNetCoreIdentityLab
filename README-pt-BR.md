@@ -26,6 +26,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Identity em um projeto MVC existente](#identity-em-um-projeto-mvc-existente)
 * [Customização do banco de dados do Identity](#customização-do-banco-de-dados-do-identity)
 * [Entity Framework x Outra persistência](#entity-framework-x-outra-persistência)
+* [SignManager x UserManager x RoleManager](#signmanager-x-usermanager-x-rolemanager)
 
 ## Pré-requisitos
 
@@ -336,3 +337,13 @@ Com base nisso, as classes `SignInManager` e` UserManager` podem usar a nova cla
 Para mais detalhes sobre o design original no ASP.NET Core Identity as classes [UserStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/UserStoreBase.cs), [UserStore](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/EntityFrameworkCore/src/UserStore.cs), [RoleStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/RoleStoreBase.cs) and [RoleStore](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/EntityFrameworkCore/src/RoleStore.cs) podem ser verificadas.
 
 >Uma forma de facilitar a criação da estrutura de banco de dados, quando outro mecanismo de persistência for usado com um banco de dados relacional, é configurar o projeto com Entity Framework Core, gerar a migração, aplicar a migração com tabelas e campos no banco de dados e depois remover a dependência com o EF Core para só então usar outro mecanismo de persistência como mostrado acima.
+
+## SignManager x UserManager x RoleManager
+
+O objetivo desta seção é falar sobre as classes de serviços mais importantes do Identity: SignManager, UserManager e RoleManager.
+
+Essas classes são responsáveis por gerenciar todo o processo de persistência de usuários, autenticação e lidar com Roles e Claims. Entender os principais serviços dessas classes é essencial para usar corretamente o ASP.NET Core Identity. Ao longo desta documentação, muitos exemplos de como usar essas classes serão mostrados.
+
+* **SignManager**: fornece as APIs para login do usuário;
+* **UserManager**: fornece as APIs para gerenciar o usuário e sua persistência;
+* **RoleManager**: fornece as APIs para gerenciar Roles e sua persistência.
