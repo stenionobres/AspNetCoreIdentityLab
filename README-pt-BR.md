@@ -24,6 +24,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [IdentityOptions](#IdentityOptions)
     * [Identity em um projeto novo](#identity-em-um-projeto-novo)
     * [Identity em um projeto MVC existente](#identity-em-um-projeto-mvc-existente)
+* [Customização do banco de dados do Identity](#customização-do-banco-de-dados-do-identity)
 
 ## Pré-requisitos
 
@@ -306,3 +307,15 @@ app.UseAuthentication();
 ```
 * Executar o comando Add-Migration para criar a migração do Identity;
 * Executar o comando Update-Database para criar a [estrutura de banco de dados do Identity](#modelo-padrão-de-banco-de-dados);
+
+## Customização do banco de dados do Identity
+
+E se o desenvolvedor precisar alterar o nome das tabelas? Usar outro nome de esquema ou usar um banco de dados separado para autenticação? Como o desenvolvedor deve proceder?
+
+É possível usar a EF Core Fluent API e a configuração do DBContext para alterar a estrutura de banco de dados padrão do ASP.NET Core Identity. Coisas como um nome de esquema diferente ou nomes de tabelas diferentes.
+
+Para isso, os nomes das tabelas e esquema personalizados são mostrados [neste DBContext](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts/AspNetCoreIdentityLabCustomModelDbContext.cs). Uma [migração relacionada](./AspNetCoreIdentityLab.Persistence/Migrations/AspNetCoreIdentityLabCustomModel/20210112191330_DatabaseInitialStructure.cs) foi criada para gerar uma estrutura de banco de dados inicial.
+
+Também é possível usar bancos de dados diferentes. Um exemplo é mostrado em [API de autenticação](#autenticação-rest-api) e [API de autorização](#autorização-rest-api) que usa bancos de dados diferentes com DBContexts diferentes para armazenar os dados.
+
+Outras informações para personalizar o banco de dados do ASP.NET Core Identity podem ser encontradas neste [excelente guia](https://docs.microsoft.com/en-US/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-3.1).
