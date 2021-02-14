@@ -293,7 +293,7 @@ Como foi dito o projeto [AspNetCoreIdentityLab.Persistence](./AspNetCoreIdentity
 * Adicionar [Entity Framework Core SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer) ao projeto;
 * Adicionar [Entity Framework Core Tools](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools) ao projeto;
 * Adicionar [User model](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/User.cs) ao projeto;
-* Adicionar [DbContext](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/AspNetCoreIdentityLabDbContext.cs) ao projeto;
+* Adicionar [DbContext](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts/AspNetCoreIdentityLabDbContext.cs) ao projeto;
 * Adicionar o código abaixo no método `ConfigureServices` na classe `Startup.cs`;
 ``` C#
 services.AddDefaultIdentity<YourUserModel>()

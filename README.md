@@ -335,7 +335,7 @@ How was said the [AspNetCoreIdentityLab.Persistence](./AspNetCoreIdentityLab.Per
 * Add [Entity Framework Core SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer) to project;
 * Add [Entity Framework Core Tools](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools) to project;
 * Add [User model](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/User.cs) to project;
-* Add [DbContext](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/AspNetCoreIdentityLabDbContext.cs) to project;
+* Add [DbContext](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts/AspNetCoreIdentityLabDbContext.cs) to project;
 * Add code below in `ConfigureServices` method in `Startup.cs` class;
 ``` C#
 services.AddDefaultIdentity<YourUserModel>()
