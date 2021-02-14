@@ -29,7 +29,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
 * [SignManager x UserManager x RoleManager](#signmanager-x-usermanager-x-rolemanager)
 * [Identity Scaffolded Pages](#identity-scaffolded-pages)
 * [Registrando um usuário](#registrando-um-usuário)
-    * [Como customizar atributos de usuário?](#como-customizar-atributos-de-usuário?)
+    * [Como customizar atributos de usuário?](#como-customizar-atributos-de-usuário)
     * [Regras de registro customizadas](#regras-de-registro-customizadas)
     * [Confirmação de conta por email](#confirmação-de-conta-por-email)
 
