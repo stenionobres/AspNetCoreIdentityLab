@@ -1224,7 +1224,7 @@ A **imagem 03** apresenta como os dados da estrutura de autorização são organ
 
 ### Estrutura das classes de recurso
 
-Sabemos que o software não trivial exige um conjunto de muitos menus e funcionalidades aninhadas. Não é difícil ver aplicações empresariais com centenas de funcionalidades. Em geral, essa organização é feita em módulos, submódulos e suas funcionalidades. E não é tudo, às vezes é necessário autorizar diferentes ações no mesmo recurso como: Criar, Excluir, Ler e Atualizar.
+Sabemos que o software não trivial exige um conjunto de muitos menus e funcionalidades aninhadas. Não é difícil ver aplicações empresariais com centenas de funcionalidades. Em geral, essa organização é feita em módulos, submódulos e suas funcionalidades. E não é tudo, às vezes é necessário autorizar diferentes ações no mesmo recurso como: Create, Delete, Read e Update.
 
 Abaixo está um pequeno exemplo de um aplicativo corporativo com módulos, submódulos, funcionalidades e suas ações:
 
