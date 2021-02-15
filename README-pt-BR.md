@@ -44,6 +44,12 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Autenticação com provedores externos](#autenticação-com-provedores-externos)
     * [Identificando logins do mesmo usuário de diferentes IPS](#identificando-logins-do-mesmo-usuário-de-diferentes-IPS)
     * [User Impersonation](#user-impersonation)
+* [Autorizando um usuário](#autorizando-um-usuário)
+    * [Claims](#claims)
+    * [Roles](#roles)
+    * [Policies](#policies)
+    * [Serviço de autorização](#serviço-de-autorização)
+    * [Atributo de autorização customizado](#atributo-de-autorização-customizado)
 
 ## Pré-requisitos
 
@@ -784,3 +790,305 @@ Abaixo é mostrada uma imagem que mostra a funcionalidade de Impersonation:
 ![image info](./readme-pictures/user-impersonation.jpg)
 
 Além disso, uma classe chamada [ImpersonateExtensions](./AspNetCoreIdentityLab.Application/Tools/ImpersonateExtensions.cs) foi adicionada para gerar o nome do perfil do usuário conectado. Para completar a solução, uma configuração teve que ser feita no `Startup.cs` para evitar o término do Impersonation na atualização do SecurityStampToken.
+
+## Autorizando um usuário
+
+A autorização é o processo que responde à pergunta **O que o usuário pode fazer no aplicativo?** Por exemplo, um usuário administrativo tem permissão para excluir um documento. No entanto, um usuário não administrativo está autorizado apenas a ler os documentos.
+
+O processo de autorização é independente da autenticação, de modo que as classes de autorização pertencem apenas ao ASP.NET Core. Isso permite que essas classes possam ser usadas sem o ASP.NET Core Identity. Apesar disso, os dois conjuntos de classes são frequentemente usados juntos.
+
+Os componentes de autorização podem ser usados no código adicionando os atributos **AuthorizeAttribute** e **AllowAnonymousAttribute**, como o código abaixo:
+
+``` C#
+[Authorize]
+public class ExampleController : Controller
+{
+    public ActionResult FirstAction()
+    {
+
+    }
+
+    [AllowAnonymous]
+    public ActionResult SecondAction()
+    {
+
+    }
+}
+```
+
+Para entender melhor as configurações de autorização, os conceitos de **Claims, Roles e Policies** precisam ser definidos. Esses conceitos serão apresentados nas próximas seções.
+
+### Claims
+
+Uma Claim em geral é um par chave/valor que representa um atributo do usuário. Por exemplo: uma data de nascimento ou idade.
+
+O código a seguir é um bom exemplo de como associar uma Claim ao usuário:
+
+``` C#
+var user = await _userManager.FindByNameAsync("email@example.com");
+var ageClaim = new Claim(type: "Age", value: "25");
+await _userManager.AddClaimAsync(user, ageClaim);
+```
+
+A autorização baseada em Claims, na sua forma mais simples, verifica o valor de uma Claim e permite o acesso a um recurso com base nesse valor.
+
+A autorização por meio de Claims é baseada em policies, o desenvolvedor deve construir e registrar uma policy expressando os requisitos das Claims. Nesta [seção](#policies) as policies são mais detalhadas, no entanto, abaixo é mostrado como criar uma policy básica que usa uma Claim específica.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("HasJob", policy => policy.RequireClaim("Occupation"));
+        options.AddPolicy("Developers", policy => policy.RequireClaim("Occupation", "Software Developer"));
+    });
+}
+```
+
+A policy **HasJob** verifica se o usuário tem a Claim `Occupation` e a policy **Developers** verifica se o usuário tem o valor de `Software Developer` na Claim Occupation. Abaixo é mostrado como usar essas policies:
+
+``` C#
+[Authorize(Policy = "HasJob")]
+public class VacationController : Controller
+{
+    [AllowAnonymous]
+    public ActionResult VacationRules()
+    {
+
+    }
+
+    public ActionResult VacationBalance()
+    {
+
+    }
+
+    [Authorize(Policy = "Developers")]
+    public ActionResult RequestDeveloperVacation()
+    {
+
+    }
+}
+```
+
+Somente usuários que possuem a Claim `Occupation` definida na policy HasJob podem acessar o VacationController, exceto pela action `VacationRules` que permite o acesso de todos os usuários. A action `RequestDeveloperVacation` tem duas policies aplicadas: HasJob e Developers. A action `VacationBalance` respeita apenas a policy HasJob.
+
+### Roles
+
+Uma Role é um tipo de atributo que pode ser aplicado a um usuário. As Roles contêm um conjunto de permissões para realizar um conjunto de atividades no aplicativo. Exemplo de roles: Administrador, Gerente e Supervisor. Uma Role também pode ser vista como um grupo de usuários.
+
+O código a seguir é um bom exemplo de como associar uma role ao usuário:
+
+``` C#
+var user = await _userManager.FindByNameAsync("email@example.com");
+var adminRole = new IdentityRole<int>("Admin");
+await _roleManager.CreateAsync(adminRole);
+await _userManager.AddToRoleAsync(user, "Admin");
+```
+
+As Roles podem ter as próprias Claims que podem ser usadas para regras de autorização mais complexas. O código a seguir mostra como atribuir uma Claim a uma Role:
+
+``` C#
+var claim = new Claim(type: "ProfileId", value: "3");
+var adminRole = await _roleManager.FindByNameAsync("Admin");
+await _roleManager.AddClaimAsync(adminRole, claim);
+```
+
+As Roles podem ser usadas no atributo `Authorize` dentro dos controladores. Múltiplas roles também podem ser utilizadas.
+
+``` C#
+[Authorize(Roles = "Admin")]
+public class AdministrationController : Controller
+{
+
+}
+
+[Authorize(Roles = "HRManager, Finance")]
+public class SalaryController : Controller
+{
+
+}
+
+[Authorize(Roles = "PowerUser")]
+[Authorize(Roles = "ControlPanelUser")]
+public class ControlPanelController : Controller
+{
+
+}
+```
+
+A configuração acima feita em `SalaryController` só permite que usuários com role HRManager **OU** a role Finance acessem as actions do controlador. Além disso, a configuração feita em `ControlPanelController` só permite que usuários com a role PowerUser **E** a role ControlPanelUser acessem as actions do controlador. É importante observar que uma configuração representa o conector OR e outra representa o conector AND.
+
+Outra maneira de usar Roles é com Policies. Abaixo estão alguns exemplos de como criar Policies usando Roles.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("Administrator", policy => policy.RequireRole("Admin"));
+        options.AddPolicy("TechnicalTeam", policy => policy.RequireRole("PowerUser", "BackupAdministrator", "DBA"));
+    });
+}
+```
+
+### Policies
+
+Uma Policy é um conjunto de um ou mais requisitos necessários para autorizar uma solicitação do usuário a um recurso específico. É possível definir policies com base em Claims, Roles ou ambos.
+
+Abaixo é mostrado um código que usa Claims e Roles para definir uma Policy:
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options => {
+        options.AddPolicy("DotNetTeamManager", policy => {
+                policy.RequireRole("Manager");
+                policy.RequireClaim("Skill", "ASP.NET Core");
+        });
+    });
+}
+
+[Authorize(Policy = "DotNetTeamManager")]
+public class TeamController : Controller
+{
+
+}
+```
+
+Às vezes, apenas Claims e Roles não são suficientes para definir uma Policy. Neste caso é necessário criar uma **Policy personalizada**. Para isso é necessário criar um **requirement** e um **handler**.
+
+* Requirement: um requisito é uma coleção de parâmetros de dados usados pela policy para avaliar a identidade do usuário;
+* Handler: um handler é o responsável por avaliar as propriedades dos requirements para determinar se o usuário está autorizado a acessar um recurso específico;
+
+Para entender melhor como criar uma policy customizada, os conceitos serão detalhados com base no exemplo de policy de tempo de experiência. Mais detalhes sobre esse código podem ser vistos no namespace [CustomAuthorization](./AspNetCoreIdentityLab.Application/CustomAuthorization).
+
+Primeiramente é necessário criar um requirement. Um requirement implementa a interface `IAuthorizationRequirement`.
+
+``` C#
+public class TimeExperienceRequirement : IAuthorizationRequirement
+{
+    public int TimeExperience { get; }
+
+    public TimeExperienceRequirement(int timeExperience)
+    {
+        TimeExperience = timeExperience;
+    }
+}
+```
+
+Depois disso, um handler precisa ser criado. Um handler precisa herdar da classe `AuthorizationHandler <TRequirement>`, onde TRequirement é o requirement a ser manipulado.
+
+``` C#
+public class TimeExperienceHandler : AuthorizationHandler<TimeExperienceRequirement>
+{
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, 
+                                                   TimeExperienceRequirement requirement)
+    {
+        var user = context.User;
+        var timeExperienceClaim = user.FindFirst("TimeExperience");
+
+        if (timeExperienceClaim != null)
+        {
+            var timeExperience = int.Parse(timeExperienceClaim?.Value);
+            if (timeExperience >= requirement.TimeExperience)
+            {
+                context.Succeed(requirement);
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+}
+```
+
+Com o handler criado é necessário o cadastro na coleção de serviços.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("AtLeastFiveYearsExperience", policy => policy.Requirements.Add(new TimeExperienceRequirement(5)));
+        options.AddPolicy("AtLeastSevenYearsExperience", policy => policy.Requirements.Add(new TimeExperienceRequirement(7)));
+    });
+    services.AddSingleton<IAuthorizationHandler, TimeExperienceHandler>();
+}
+```
+
+Então, as policies podem ser aplicadas nos controllers.
+
+``` C#
+[Authorize(Policy = "AtLeastFiveYearsExperience")]
+public class BackupController : Controller
+{
+
+    public ActionResult GetLastBackup()
+    {
+
+    }
+
+    [Authorize(Policy = "AtLeastSevenYearsExperience")]
+    public ActionResult RebuildIndexes()
+    {
+
+    }
+}
+```
+
+### Serviço de autorização
+
+Às vezes é necessário aplicar a autorização em um bloco de código em uma action do controlador por exemplo. Para isso é possível usar uma instância da interface `IAuthorizationService` diretamente.
+
+A IAuthorizationService tem duas sobrecargas de método: uma aceitando o recurso e o nome da policy e a outra aceitando o recurso e uma lista de requirements a serem avaliados.
+
+Abaixo um exemplo de código onde o IAuthorizationService é usado para verificar se um recurso de vídeo pode ser adicionado ao repositório.
+
+``` C#
+[HttpPost]
+[Authorize]
+public async Task<IActionResult> AddVideo([FromBody] VideoVM video) 
+{ 
+    var authorizationResult = await _authorizationService.AuthorizeAsync(User, video, "AddVideoPolicy");
+ 
+    if (authorizationResult.Succeeded) 
+    {
+        VideoRepository.Videos.Add(video);
+        return Ok();
+    } 
+    
+    return new ForbidResult();
+}
+```
+
+### Atributo de autorização customizado
+
+Para usar a autorização padrão, o atributo `[Authorize]` deve ser usado nos controladores. Em alguns casos, a mesma policy com valores de parâmetros diferentes precisa ser aplicada em contextos diferentes. Em vez de criar várias policies na classe de inicialização, é possível criar um **atributo personalizado** para usar a mesma policy com diferentes valores de parâmetros.
+
+Para isso a classe [TimeExperienceAuthorizeAttribute](./AspNetCoreIdentityLab.Application/CustomAuthorization/TimeExperienceAuthorizeAttribute.cs) foi criada extendendo a classe `AuthorizeAttribute`. Esta classe usa o enumerador [TimeExperience](./AspNetCoreIdentityLab.Application/CustomAuthorization/TimeExperience.cs) que tem as possibilidades de valores para autorização.
+
+Para gerar as policies com diferentes valores de parâmetros a classe [CustomPolicyProvider](./AspNetCoreIdentityLab.Application/CustomAuthorization/CustomPolicyProvider.cs) foi criada. Esta classe verifica se o nome da policy corresponde com a **policy prefix** aplicada na classe [TimeExperienceAuthorizeAttribute](./AspNetCoreIdentityLab.Application/CustomAuthorization/TimeExperienceAuthorizeAttribute.cs), se verdadeiro adiciona uma instância do [TimeExperienceRequirement](./AspNetCoreIdentityLab.Application/CustomAuthorization/TimeExperienceRequirement.cs) com o valor de parâmetro para a nova policy.
+
+Por fim é necessário registrar a classe `CustomPolicyProvider` na classe `Startup` usando o código abaixo.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddTransient<IAuthorizationPolicyProvider, CustomPolicyProvider>();
+}
+```
+
+Para fins de exemplo o TimeExperienceAuthorizeAttribute é usado no [BackupController](./AspNetCoreIdentityLab.Application/Controllers/BackupController.cs) com o código abaixo:
+
+``` C#
+[Authorize(Policy = "AtLeastFiveYearsExperience")]
+public class BackupController : Controller
+{
+    //omitted code
+
+    [TimeExperienceAuthorize(TimeExperience.LEVEL_THREE)]
+    public ActionResult RemoveBackup()
+    {
+        return Ok("RemoveBackup");
+    }
+}
+```
