@@ -50,6 +50,10 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Policies](#policies)
     * [Serviço de autorização](#serviço-de-autorização)
     * [Atributo de autorização customizado](#atributo-de-autorização-customizado)
+* [Api REST de autenticação](#api-rest-de-autenticação)
+    * [Configuração](#configuração)
+    * [Json Web Token (JWT)](#json-web-token-jwt)
+    * [Recursos da API](#recursos-da-api)
 
 ## Pré-requisitos
 
@@ -1092,3 +1096,53 @@ public class BackupController : Controller
     }
 }
 ```
+
+## Api REST de autenticação
+
+A maioria das aplicações modernas possui uma API REST com o objetivo de se comunicar com outros softwares, aplicativo móvel ou front-end web.
+
+Pensando que a maioria dos aplicativos modernos devem expor serviços em uma API REST, os serviços do ASP.NET Core Identity não podem ser diferentes.
+
+Com base nisso, esta seção mostrará como expor os serviços de autenticação do ASP.NET Core Identity em uma API REST.
+
+>É importante observar que este exemplo de API não pretende seguir todas as boas práticas recomendadas de design de API e provavelmente não está seguindo. O objetivo principal é apresentar uma maneira de acessar os recursos do ASP.NET Core Identity por meio de uma API.
+
+### Configuração
+
+Um novo projeto chamado [AspNetCoreIdentityLab.Api](./AspNetCoreIdentityLab.Api/) foi adicionado à solução. Este projeto possui algumas classes de configuração, controladores e models que fazem parte da API REST.
+
+Inicialmente o [AuthenticationDbContext](./AspNetCoreIdentityLab.Persistence/EntityFrameworkContexts/AuthenticationDbContext.cs) foi adicionado à solução. A API de autenticação usa um banco de dados separado chamado `Authentication`. Em seguida, uma referência ao projeto de persistência foi criada e o AuthenticationDbContext configurado no método ConfigureServices da classe [Startup](./AspNetCoreIdentityLab.Api/Startup.cs) do projeto AspNetCoreIdentityLab.Api.
+
+Feitas estas configurações a [estrutura do banco de dados](./AspNetCoreIdentityLab.Persistence/Migrations/Authentication/20210118132541_IdentityStructure.cs) pode ser gerada.
+
+### Json Web Token (JWT)
+
+JSON Web Tokens (JWT) é um padrão aberto da indústria para representar Claims com segurança entre as duas partes. Este padrão será usado para gerar o token após a autenticação. O token contém informações importantes para autorizar o usuário da api.
+
+Para isto o pacote [JwtBearer](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer/) foi adicionado no projeto AspNetCoreIdentityLab.Api.
+
+A configuração do pacote é definida nos métodos `GetAuthenticationOptions` e `GetJwtBearerOptions` da classe [Startup](./AspNetCoreIdentityLab.Api/Startup.cs).
+
+Para gerar os tokens o serviço [JwtService](./AspNetCoreIdentityLab.Api/Jwt/JwtService.cs) é usado pela aplicação.
+
+Uma configuração para usar o JWT precisa ser definida em `secrets.json`. A seguir são apresentados os exemplos de configuração usadas no secrets.json do projeto.
+
+``` JSON
+{
+  "Jwt": {
+    "Issuer": "https://localhost:44328/",
+    "Secret": "b14ca8998a4e4133bbce2ea2377a1916",
+    "ExpirationInDays": 30
+  }
+}
+```
+
+### Recursos da API
+
+O [UserController](./AspNetCoreIdentityLab.Api/Controllers/UserController.cs) tem a responsabilidade de expor a Api REST de autenticação.
+
+Em primeiro lugar, o cliente da API deve registrar um usuário no aplicativo. Para isso deve ser solicitado o serviço **SignUp**. Na requisição deve-se utilizar o verbo http `POST` enviando o Email, Senha e Ocupação do usuário.
+
+Depois disso, o usuário da API deve solicitar o serviço **SignIn**. Este serviço precisa do verbo http `POST` e do e-mail e senha para autenticação. Se tudo estiver certo, o serviço envia uma resposta com o token JWT.
+
+O serviço **GetAll** necessita do verbo http `GET` e tem como resposta a lista de usuários cadastrados no banco de dados. Este serviço tem um atributo `[Authorize]` que significa que apenas solicitações feitas com token serão aceitas.
