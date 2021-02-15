@@ -40,7 +40,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Expirar sessão de login](#expirar-sessão-de-login)
     * [Bloqueio de conta](#bloqueio-de-conta)
     * [Google reCaptcha](#google-recaptcha)
-    * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
+    * [Autenticação de dois fatores 2FA](#autenticação-de-dois-fatores-2FA)
     * [Autenticação com provedores externos](#autenticação-com-provedores-externos)
     * [Identificando logins do mesmo usuário de diferentes IPS](#identificando-logins-do-mesmo-usuário-de-diferentes-IPS)
     * [User Impersonation](#user-impersonation)
@@ -94,7 +94,7 @@ Abaixo estão listados quais requisitos a solução atende:
     Password Hashing;
     Password Rotation;
     Captchas;
-    Two Factor Authentication (2FA);
+    Autenticação de dois fatores (2FA);
     Provedor externo de autenticação (Google, Facebook, etc);
     Bloqueio de logins concorrentes;
     Identificar acessos de diferentes ips;
@@ -184,7 +184,7 @@ A principais namespaces são: `Controllers`, `DynamicAuthorization`, `Jwt`, `Mod
 
 ### AspNetCoreIdentityLab-Application
 
-É uma `ASP.NET Core Web Application` com **MVC template** que tem a responsabilidade de manter as funcionalidade de registro de usuário, login de usuário, Two-Factor Authentication (2FA), etc.
+É uma `ASP.NET Core Web Application` com **MVC template** que tem a responsabilidade de manter as funcionalidade de registro de usuário, login de usuário, Autenticação de dois fatores (2FA), etc.
 
 ![image info](./readme-pictures/aspnetcoreidentitylab-application.jpg)
 
@@ -525,7 +525,7 @@ Alguns aplicativos precisam bloquear sessões de login simultâneas, ou seja, o 
 
 Esse comportamento é difícil de ser feito na maioria dos aplicativos porque para alguns cenários é complicado saber se o usuário desligou a sessão no cliente.
 
-No momento, o ASP.NET Core Identity não oferece recursos para evitar diretamente a sessão de login simultânea. No entanto, um bom recurso para evitar a sessão de login simultânea é [Two-Factor Authentication](#two-factor-authentication-2FA).
+No momento, o ASP.NET Core Identity não oferece recursos para evitar diretamente a sessão de login simultânea. No entanto, um bom recurso para evitar a sessão de login simultânea é [Autenticação de dois fatores 2FA](#autenticação-de-dois-fatores-2FA).
 
 ### Expirar sessão de login
 
@@ -617,7 +617,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-### Two-factor authentication 2FA
+### Autenticação de dois fatores 2FA
 
 A autenticação de dois fatores (2FA) é um método de autenticação eletrônica em que um usuário de computador tem acesso a um site ou aplicativo somente após apresentar com sucesso duas ou mais evidências (ou fatores) para um mecanismo de autenticação: conhecimento (algo apenas o usuário sabe), posse (algo que apenas o usuário possui) e herança (algo que apenas o usuário é). (Wikipedia)
 
