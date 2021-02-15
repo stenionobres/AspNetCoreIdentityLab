@@ -976,7 +976,7 @@ public class TimeExperienceRequirement : IAuthorizationRequirement
 }
 ```
 
-Depois disso, um handler precisa ser criado. Um handler precisa herdar da classe `AuthorizationHandler <TRequirement>`, onde TRequirement é o requirement a ser manipulado.
+Depois disso, um handler precisa ser criado. Um handler precisa herdar da classe `AuthorizationHandler<TRequirement>`, onde TRequirement é o requirement a ser manipulado.
 
 ``` C#
 public class TimeExperienceHandler : AuthorizationHandler<TimeExperienceRequirement>
