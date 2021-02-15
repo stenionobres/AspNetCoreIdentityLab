@@ -62,6 +62,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Estrutura do banco de dados](#estrutura-do-banco-de-dados)
 * [Log de ações](#log-de-ações)
 * [Referências utilizadas](#referências-utilizadas)
+* [Autores](#autores)
 
 ## Pré-requisitos
 
@@ -1347,3 +1348,7 @@ Para mais informações por favor veja a [documentação](https://docs.microsoft
 * [Chsakell's Blog - ASP.NET Core Identity Series](https://chsakell.com/2018/04/28/asp-net-core-identity-series-getting-started/)
 
 * [Youtube - ASP.NET Core Identity tutorial](https://www.youtube.com/playlist?list=PLuIbNTr1XSlY8YmCyCfB4LCfkf4cl133b)
+
+## Autores
+
+* **Stenio Nobres** - [Github](https://github.com/stenionobres) | [LinkedIn](https://www.linkedin.com/in/stenionobres/)
