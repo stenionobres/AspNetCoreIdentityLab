@@ -54,6 +54,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Configuração](#configuração)
     * [Json Web Token (JWT)](#json-web-token-jwt)
     * [Recursos da API](#recursos-da-api)
+* [Api REST de autorização](#api-rest-de-autorização)
 
 ## Pré-requisitos
 
@@ -1146,3 +1147,17 @@ Em primeiro lugar, o cliente da API deve registrar um usuário no aplicativo. Pa
 Depois disso, o usuário da API deve solicitar o serviço **SignIn**. Este serviço precisa do verbo http `POST` e do e-mail e senha para autenticação. Se tudo estiver certo, o serviço envia uma resposta com o token JWT.
 
 O serviço **GetAll** necessita do verbo http `GET` e tem como resposta a lista de usuários cadastrados no banco de dados. Este serviço tem um atributo `[Authorize]` que significa que apenas solicitações feitas com token serão aceitas.
+
+## Api REST de autorização
+
+Assim como a API de autenticação em algumas situações é necessário expor os serviços de autorização em uma API.
+
+Para isso, alguns controladores precisam ser criados para expor serviços que criam Roles, associar Claims a Roles e associar Claims aos usuários. Esses controladores precisam usar instâncias das classes `RoleManager` e `UserManager`. Para entender melhor o que são Roles e Claims, o tópico [Autorizando um usuário](#autorizando-um-usuário) deve ser lido.
+
+Para mostrar exemplos alguns controladores vão ser apresentados:
+
+* [RoleController](./AspNetCoreIdentityLab.Api/Controllers/RoleController.cs): expõe recursos para criar e consultar roles;
+* [RoleClaimsController](./AspNetCoreIdentityLab.Api/Controllers/RoleClaimsController.cs): expõe recursos para associar claims a roles;
+* [UserClaimsController](./AspNetCoreIdentityLab.Api/Controllers/UserClaimsController.cs): expõe recursos para associar claims to users;
+
+>É importante observar que este exemplo de API não pretende seguir todas as boas práticas recomendadas de design de API e provavelmente não está seguindo. O objetivo principal é apresentar uma maneira de acessar os recursos do ASP.NET Core Identity por meio de uma API.
