@@ -491,7 +491,7 @@ As características do Password Hasher são as seguintes:
 | **Subkey**      | 256-bit                 |
 | **Iterations**  | 10.000                  |
 
-O artigo [article](https://andrewlock.net/exploring-the-asp-net-core-identity-passwordhasher/) de Andrew Lock apresenta mais detalhes sobre o PBKDF2 Password Hasher.
+O [artigo](https://andrewlock.net/exploring-the-asp-net-core-identity-passwordhasher/) de Andrew Lock apresenta mais detalhes sobre o PBKDF2 Password Hasher.
 
 É possível alterar o algoritmo usado pelo Password Hasher. Para isso, consulte o artigo de Scott Brady [Improving the ASP.NET Core Identity Password Hasher](https://www.scottbrady91.com/ASPNET-Identity/Improving-the-ASPNET-Core-Identity-Password-Hasher). É importante dizer que a alteração do algoritmo padrão deve ser utilizada somente se sua equipe tiver bons conhecimentos sobre segurança e criptografia.
 
@@ -615,7 +615,7 @@ Essas páginas são úteis para personalizar o código padrão ou para fornecer 
 
 A página [EnableAuthenticator](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Manage/EnableAuthenticator.cshtml) fornece o token a ser inserido no two factor authenticator aplicativo. No entanto, um recurso importante que não existe por padrão é o Qrcode a ser scaneado pelo aplicativo.
 
-Para fornecer o recurso QRCode a lib [QRCode.js] (https://davidshimjs.github.io/qrcodejs/) foi adicionada ao projeto e usada na página EnableAuthenticator.
+Para fornecer o recurso de QRCode a lib [QRCode.js](https://davidshimjs.github.io/qrcodejs/) foi adicionada ao projeto e usada na página EnableAuthenticator.
 
 O caminho para acessar o token de registro é clicar no email do usuário no topo da página > Two-factor authentication menu > Setup authenticator app.
 
