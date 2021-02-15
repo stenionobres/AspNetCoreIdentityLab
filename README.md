@@ -63,7 +63,7 @@ After the case studies, the main conclusions were documented in this file and se
     * [Resource class structure](#resource-class-structure)
     * [Policy database structure](#policy-database-structure)
 * [Logging](#logging)
-* Lessons learned
+* [Lessons learned](#lessons-learned)
 * [References used](#references-used)
 * [Authors](#authors)
 
@@ -1332,6 +1332,16 @@ In the [appsettings.json](./AspNetCoreIdentityLab.Application/appsettings.json) 
 ![image info](./readme-pictures/identityproject-logging.jpg)
 
 For more information please see the [documentation](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1).
+
+## Lessons learned
+
+ASP.NET Core Identity proved to be an excellent framework for identity management. It implements the main features for user authentication such as: confirmation via email, two-factor authentication, automatic account lockout, password management, among other things.
+
+In addition, the framework proved to be quite flexible, with possibilities to extend the main rules and classes such as `SignManager`, `UserManager` and `RoleManager`. The customization of the database also proved possible both in terms of structure and in terms of persistence mechanisms.
+
+However, some advanced features do not yet exist in ASP.NET Core Identity by default, for example, Password Rotation, blocking simultaneous logins or managing logins of different ips. Although these features do not exist by default, the flexibility that ASP.NET Core Identity offers allows you to create alternatives to those features.
+
+To conclude, the framework proved to be very complete in meeting most of the authentication and authorization needs, placing itself as a great alternative for small, medium and large applications.
 
 ## References used
 
