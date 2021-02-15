@@ -61,6 +61,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Estrutura das classes de recurso](#estrutura-das-classes-de-recurso)
     * [Estrutura do banco de dados](#estrutura-do-banco-de-dados)
 * [Log de ações](#log-de-ações)
+* [Principais lições aprendidas](#principais-lições-aprendidas)
 * [Referências utilizadas](#referências-utilizadas)
 * [Autores](#autores)
 
@@ -1328,6 +1329,16 @@ No arquivo [appsettings.json](./AspNetCoreIdentityLab.Application/appsettings.js
 ![image info](./readme-pictures/identityproject-logging.jpg)
 
 Para mais informações por favor veja a [documentação](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1).
+
+## Principais lições aprendidas
+
+O ASP.NET Core Identity se mostrou um excelente framework para gestão de identidades. Ele implementa os principais recursos para autenticação de usuários como: confirmação via email, autenticação de dois fatores, bloqueio automático de contas, gestão de senhas, entre outras coisas.
+
+Além disso o framework se mostrou bastante flexível, com possibilidades de extensão das principais regras e classes como `SignManager`, `UserManager` e `RoleManager`. A customização do banco de dados também se mostrou possível tanto em termos de estrutura quanto em termos de mecanismos de persistência.
+
+Entretanto, alguns recursos avançados ainda não existem no ASP.NET Core Identity por padrão, por exemplo, Password Rotation, bloqueio de logins simultâneos ou gestão de logins de diferentes ips. Apesar destes recursos não existirem por padrão, a flexibilidade que o ASP.NET Core Identity oferece permite criar alternativas para esse recursos.
+
+Para concluir, o framework se mostrou bem completo em atender grande parte das necessidades de autenticação e autorização, se colocando como uma ótima alternativa para aplicações de pequeno, médio e grande porte.
 
 ## Referências utilizadas
 
