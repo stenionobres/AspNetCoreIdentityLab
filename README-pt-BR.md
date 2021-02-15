@@ -60,6 +60,7 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Como as autorizações dinâmicas funcionam?](#como-as-autorizações-dinâmicas-funcionam)
     * [Estrutura das classes de recurso](#estrutura-das-classes-de-recurso)
     * [Estrutura do banco de dados](#estrutura-do-banco-de-dados)
+* [Log de ações](#log-de-ações)
 
 ## Pré-requisitos
 
@@ -1294,3 +1295,34 @@ Uma tabela chamada `Policy` foi criada para armazenar as policies. O campo Id é
 ![image info](./readme-pictures/policy-database-detail.png)
 
 É importante dizer que as **chaves estrangeiras entre as tabelas não foram estabelecidas**. A tabela `Policy` serve apenas para esclarecer os dados sobre quais policies são armazenadas em outras tabelas. Elas estão relacionadas entre si por meio do campo Id da tabela Policy com o campo ClaimValue das outras tabelas.
+
+## Log de ações
+
+Para registrar um log, a API de log ASP.NET Core deve ser usada. Isso é possível usando a interface `ILogger`.
+
+O código a seguir mostra como criar uma instância ILogger com o mecanismo de injeção de dependência:
+
+``` C#
+public class AboutModel : PageModel
+{
+    private readonly ILogger _logger;
+
+    public AboutModel(ILogger<AboutModel> logger)
+    {
+        _logger = logger;
+    }
+    public string Message { get; set; }
+
+    public void OnGet()
+    {
+        Message = $"About page visited at {DateTime.UtcNow.ToLongTimeString()}";
+        _logger.LogInformation(Message);
+    }
+}
+```
+
+No arquivo [appsettings.json](./AspNetCoreIdentityLab.Application/appsettings.json) é possível configurar as opções de log. Por padrão os logs são apresentados na aba **Output** no Visual Studio.
+
+![image info](./readme-pictures/identityproject-logging.jpg)
+
+Para mais informações por favor veja a [documentação](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1).
