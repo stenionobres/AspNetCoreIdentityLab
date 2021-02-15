@@ -32,6 +32,18 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Como customizar atributos de usuário?](#como-customizar-atributos-de-usuário)
     * [Regras de registro customizadas](#regras-de-registro-customizadas)
     * [Confirmação de conta por email](#confirmação-de-conta-por-email)
+* [Autenticando um usuário](#autenticando-um-usuário)
+    * [Remember x Recover x Reset password](#remember-x-recover-x-reset-password)
+    * [Password Hashing](#password-hashing)
+    * [Password Rotation](#password-rotation)
+    * [Logins concorrentes](#logins-concorrentes)
+    * [Expirar sessão de login](#expirar-sessão-de-login)
+    * [Bloqueio de conta](#bloqueio-de-conta)
+    * [Google reCaptcha](#google-recaptcha)
+    * [Two-factor authentication 2FA](#two-factor-authentication-2FA)
+    * [Autenticação com provedores externos](#autenticação-com-provedores-externos)
+    * [Identificando logins do mesmo usuário de diferentes IPS](#identificando-logins-do-mesmo-usuário-de-diferentes-IPS)
+    * [User Impersonation](#user-impersonation)
 
 ## Pré-requisitos
 
@@ -449,3 +461,326 @@ services.AddTransient<IEmailSender, EmailSmtpSender>(email => GetEmailConfigurat
 Na classe [Register](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Register.cshtml.cs) é apresentado um exemplo que usa as opções `SignIn` para enviar um email de confirmação de criação de conta.
 
 >É importante saber que se já houver contas criadas sem confirmação de e-mail e a configuração for alterada para account confirmation, essas contas não farão login. O valor do campo **EmailConfirmed na tabela AspNetUsers** deve ser alterado para o valor = 1.
+
+## Autenticando um usuário
+
+A autenticação é o processo que responde à pergunta, **Quem é você no aplicativo?** Nesta seção, serão mostrados tópicos importantes sobre autenticação de usuário usando o ASP.NET Core Identity.
+
+O código básico para autenticação foi baseado na página razor scaffold abaixo e pode ser visto nas classes [Login.cshtml](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml) e [Login.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml.cs).
+
+![image info](./readme-pictures/scaffolded-identity-loginprocess.jpg)
+
+### Remember x Recover x Reset password
+
+As páginas scaffold destacadas na imagem abaixo são um bom exemplo de código fonte para gestão de senhas usando o ASP.NET Core Identity.
+
+![image info](./readme-pictures/scaffolded-identity-passwordprocess.jpg)
+
+O código fonte relacionado está nos arquivos de mesmo nome dentro da namespace [Account](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account).
+
+### Password Hashing
+
+O Password Hasher padrão do ASP.NET Core Identity usa o algoritmo **PBKDF2**. A implementação usa a api [ASP.NET Core Data Protection](https://docs.microsoft.com/en-us/aspnet/core/security/data-protection/introduction?view=aspnetcore-3.1) de criptografia.
+
+As características do Password Hasher são as seguintes:
+
+|                 |                         |
+| :-------------- | :---------------------: | 
+| **Algorithm**   | PBKDF2 with HMAC-SHA256 |
+| **Salt**        | 128-bit                 |
+| **Subkey**      | 256-bit                 |
+| **Iterations**  | 10.000                  |
+
+O artigo [article](https://andrewlock.net/exploring-the-asp-net-core-identity-passwordhasher/) de Andrew Lock apresenta mais detalhes sobre o PBKDF2 Password Hasher.
+
+É possível alterar o algoritmo usado pelo Password Hasher. Para isso, consulte o artigo de Scott Brady [Improving the ASP.NET Core Identity Password Hasher](https://www.scottbrady91.com/ASPNET-Identity/Improving-the-ASPNET-Core-Identity-Password-Hasher). É importante dizer que a alteração do algoritmo padrão deve ser utilizada somente se sua equipe tiver bons conhecimentos sobre segurança e criptografia.
+
+### Password Rotation
+
+Password Rotation refere-se à alteração/redefinição de senha(s). Limitar a vida útil de uma senha reduz o risco e a eficácia de ataques e explorações baseados em senha, condensando a janela de tempo durante a qual uma senha roubada pode ser válida.
+
+A frequência de rotação deve variar com base na idade da senha, uso e importância da segurança. Por exemplo, uma senha para uma conta de usuário padrão pode exigir apenas a rotação em `intervalos de 60 dias`, um processo que pode ser forçado através da expiração da senha.
+
+Até o momento o ASP.NET Core Identity **não implementa Password Rotation por padrão**. Este [github issue](https://github.com/dotnet/aspnetcore/issues/5716) fala sobre o assunto.
+
+### Logins concorrentes
+
+Alguns aplicativos precisam bloquear sessões de login simultâneas, ou seja, o mesmo usuário não pode criar mais de uma sessão de login no aplicativo.
+
+Esse comportamento é difícil de ser feito na maioria dos aplicativos porque para alguns cenários é complicado saber se o usuário desligou a sessão no cliente.
+
+No momento, o ASP.NET Core Identity não oferece recursos para evitar diretamente a sessão de login simultânea. No entanto, um bom recurso para evitar a sessão de login simultânea é [Two-Factor Authentication](#two-factor-authentication-2FA).
+
+### Expirar sessão de login
+
+Um recurso que melhora a segurança em um aplicativo é forçar a expiração da sessão de login. Para implementar isso, uma configuração foi adicionada na classe [appsettings.json](./AspNetCoreIdentityLab.Application/appsettings.json) e na classe [Startup](./AspNetCoreIdentityLab.Application/Startup.cs). Abaixo o código é apresentado:
+
+``` JSON
+{
+  "LoginExpireTimeInMinutes": 3 
+}
+```
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.ConfigureApplicationCookie(cookieOptions => GetCookieAuthenticationOptions(cookieOptions));
+}
+
+private void GetCookieAuthenticationOptions(CookieAuthenticationOptions cookieOptions)
+{
+    var loginExpireTimeInMinutes = Convert.ToDouble(Configuration["LoginExpireTimeInMinutes"]);
+
+    cookieOptions.ExpireTimeSpan = TimeSpan.FromMinutes(loginExpireTimeInMinutes);
+    cookieOptions.LoginPath = "/Identity/Account/Login";
+    cookieOptions.SlidingExpiration = true;
+}
+```
+
+Em resumo, o desenvolvedor pode alterar o tempo de expiração da sessão do usuário. A configuração é feita em minutos.
+
+### Bloqueio de conta
+
+Um recurso importante do ASP.NET Core Identity é o **bloqueio de conta de usuário**.
+
+Este recurso bloqueia o login do usuário após uma série de tentativas de login sem sucesso. Este é um comportamento importante para evitar ataques de [força bruta](https://en.wikipedia.org/wiki/Brute-force_attack), no entanto, esse recurso tem uma desvantagem que é facilitar ataques de [negação de serviço](https://en.wikipedia.org/wiki/Denial-of-service_attack) caso o atacante tenha uma lista de contas de e-mail de usuário.
+
+Para implementar esse recurso, algumas opções devem ser configuradas no arquivo [Startup.cs](./AspNetCoreIdentityLab.Application/Startup.cs) e o parâmetro `lockoutOnFailure` deve ser verdadeiro na chamada do método `PasswordSignInAsync` na classe [Login.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml.cs). Neste exemplo, após a falha do terceiro acesso, o usuário será bloqueado por 5 minutos. Os snippets de código são mostrados abaixo:
+
+``` C#
+private void GetDefaultIdentityOptions(IdentityOptions identityOptions)
+{
+    identityOptions.Lockout.AllowedForNewUsers = true;
+    identityOptions.Lockout.MaxFailedAccessAttempts = 3;
+    identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+}
+```
+
+``` C#
+var result = await _signInManager.PasswordSignInAsync(Input.EmailOrUsername, 
+                                                      Input.Password, Input.RememberMe, 
+                                                      lockoutOnFailure: true);
+```
+
+### Google reCaptcha
+
+É possível usar o **Google reCaptcha** em um formulário de login do ASP.NET Core Identity. Para isso é necessário obter as chaves da API do Google e configurar o reCaptcha na conta do Google.
+
+Primeiro, você precisa obter as chaves de API preenchendo este [formulário](https://www.google.com/recaptcha/admin/create). Selecione a opção `reCAPTCHA v2` e adicione o termo` locahost` na seção de domínio. Isso é útil para testes em modo de desenvolvimento.
+
+Após, aceite os termos de uso e salve os dados que será obtida a `SiteKey` e a `SecretKey`. O código fonte usa uma configuração no secrets.json como esta:
+
+``` JSON
+{
+    "reCAPTCHA": {
+        "SiteKey": "",
+        "SecretKey": ""
+    }
+}
+```
+
+Uma configuração no secrets.json semelhante foi feita em [Confirmação da conta por email](#confirmação-de-conta-por-email).
+
+A configuração do reCaptcha foi feita adicionando o código html e javascript abaixo em [Login.cshtml](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Login.cshtml).
+
+``` html
+<div class="g-recaptcha" data-sitekey="@configuration["reCAPTCHA:SiteKey"]"></div>
+```
+
+``` javascript
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+```
+
+A chamada para a API do Google é feita pela classe [GoogleRecaptchaService](./AspNetCoreIdentityLab.Application/Services/GoogleRecaptchaService.cs). Para usar a classe GoogleRecaptchaService e o recurso httpClient é necessário adicionar o código abaixo em `Startup.cs`.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddHttpClient();
+    services.AddTransient<GoogleRecaptchaService>();
+}
+```
+
+### Two-factor authentication 2FA
+
+A autenticação de dois fatores (2FA) é um método de autenticação eletrônica em que um usuário de computador tem acesso a um site ou aplicativo somente após apresentar com sucesso duas ou mais evidências (ou fatores) para um mecanismo de autenticação: conhecimento (algo apenas o usuário sabe), posse (algo que apenas o usuário possui) e herança (algo que apenas o usuário é). (Wikipedia)
+
+Alguns aplicativos podem ser usados para gerar um token para ser usado na autenticação como: [Authy](https://authy.com/), [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2) e [Microsoft Authenticator](https://www.microsoft.com/en-us/account/authenticator).
+
+As razor pages scaffold que podem ser usadas no projeto para 2FA são mostradas abaixo:
+
+![image info](./readme-pictures/2fa-identity-pages.jpg)
+
+Essas páginas são úteis para personalizar o código padrão ou para fornecer alguns exemplos de como usar os recursos do ASP.NET Core Identity.
+
+A página [EnableAuthenticator](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/Manage/EnableAuthenticator.cshtml) fornece o token a ser inserido no two factor authenticator aplicativo. No entanto, um recurso importante que não existe por padrão é o Qrcode a ser scaneado pelo aplicativo.
+
+Para fornecer o recurso QRCode a lib [QRCode.js] (https://davidshimjs.github.io/qrcodejs/) foi adicionada ao projeto e usada na página EnableAuthenticator.
+
+O caminho para acessar o token de registro é clicar no email do usuário no topo da página > Two-factor authentication menu > Setup authenticator app.
+
+![image info](./readme-pictures/2fa-configure-page.jpg)
+
+Assim, o usuário pode escanear o QrCode ou inserir o token no aplicativo 2FA.
+
+Quando o usuário coloca o token no aplicativo 2FA e conclui o processo de registro, alguns tokens são salvos no banco de dados na tabela **AspNetUserTokens**. Esses tokens são **AuthenticatorKey** e **RecoveryCodes**.
+
+Abaixo estão alguns exemplos desses tokens:
+
+![image info](./readme-pictures/2fa-tokens.png)
+
+O usuário provavelmente está atualizado com 2FA, mas a segurança pode ser melhorada criptografando tokens armazenados no banco de dados.
+
+Para isso, é utilizada a classe [AesEncryptor](./AspNetCoreIdentityLab.Application/Tools/AesEncryptor.cs). Esta classe foi desenvolvida usando o algoritmo AES. Para criptografar tokens, é necessário substituir alguns métodos da classe **UserManager**. Uma nova classe [UserManager](./AspNetCoreIdentityLab.Application/Custom/UserManager.cs) foi criada. Esta classe herda da classe UserManager original e alguns métodos foram sobreescritos.
+
+Abaixo estão alguns exemplos de tokens criptografados:
+
+![image info](./readme-pictures/2fa-encrypted-tokens.png)
+
+É necessário registrar o novo UserManager na classe `Startup.cs`. O uso do método `AddUserManager` em `ConfigureServices`, conforme mostrado no código abaixo, permite o uso da nova classe UserManager.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDefaultIdentity<User>(options => GetDefaultIdentityOptions(options))
+            .AddUserManager<UserManager>()
+            .AddUserValidator<CustomUserValidator>()
+            .AddPasswordValidator<CustomPasswordValidator>()
+            .AddEntityFrameworkStores<AspNetCoreIdentityLabDbContext>();
+}
+```
+
+A classe [UserManager](./AspNetCoreIdentityLab.Application/Custom/UserManager.cs) usa uma configuração para saber se a criptografia está habilitada e a chave de criptografia que deve ser usada. Abaixo é mostrada uma configuração que deve ser adicionada ao arquivo `secrets.json`. O autor recomenda que a configuração `EncryptionEnabled` seja sempre verdadeira e `EncryptionKey` deve ser qualquer valor de string.
+
+``` JSON
+{
+    "TwoFactorAuthentication": {
+        "EncryptionEnabled": true,
+        "EncryptionKey": "b14ca5898a4e413315a1916"
+    }
+}
+```
+
+### Autenticação com provedores externos
+
+Esta seção demonstra como criar usuários para fazer login usando OAuth 2.0 com credenciais de provedores de autenticação externos.
+
+Estes signin com provedores externos são muito convenientes para os usuários e transferem muitas das complexidades do gerenciamento do processo de signin para terceiros.
+
+Diversas redes sociais e empresas tem provedores de autenticação. Os principais são: [Facebook](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Facebook), [Google](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google), [Microsoft](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.MicrosoftAccount/) e [Twitter](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Twitter).
+
+>Outros provedores de autenticação de redes sociais são listados nesta [página](https://github.com/aspnet-contrib/AspNet.Security.OAuth.Providers).
+
+As razor pages que podem ser usadas no projeto para signin com provedores externos são mostradas abaixo:
+
+![image info](./readme-pictures/external-providers-identity-pages.jpg)
+
+Para exemplos, a autenticação usando os provedores do Facebook e Google serão apresentadas:
+
+* **Facebook**
+
+Para configurar o uso do provedor externo do Facebook, você precisa adicionar o pacote nuget ao projeto. O link está listado em [Versões utilizadas](#versões-utilizadas). Depois disso, um aplicativo precisa ser criado na [página de desenvolvedores do Facebook](https://developers.facebook.com/apps/). Esta [página da Microsoft](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/facebook-logins?view=aspnetcore-3.1) apresenta um bom passo a passo sobre como criar o aplicativo no Facebook.
+
+Quando o aplicativo é criado na página de desenvolvedores do Facebook, as chaves **AppId** e **AppSecret** são geradas e devem ser inseridas no arquivo `secrets.json` do projeto. A seguir são apresentadas as configurações utilizadas no secrets.json do projeto.
+
+``` JSON
+{
+    "SocialNetworkAuthentication": {
+        "Facebook": {
+            "AppId": "",
+            "AppSecret": ""
+        }
+    }
+}
+```
+
+Após a criação do aplicativo e configuração do secrets.json, o arquivo `Startup.cs` deve ser configurado. Para isso o código abaixo deve ser adicionado no método `ConfigureServices` no arquivo Startup.cs.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthentication()
+            .AddFacebook(facebookOptions => GetFacebookOptions(facebookOptions));
+}
+
+private void GetFacebookOptions(FacebookOptions facebookOptions)
+{
+    facebookOptions.AppId = Configuration["SocialNetworkAuthentication:Facebook:AppId"];
+    facebookOptions.AppSecret = Configuration["SocialNetworkAuthentication:Facebook:AppSecret"];
+    facebookOptions.SaveTokens = true;
+}
+```
+
+Outra etapa importante é salvar os tokens do Facebook gerados na autenticação. Para isso, o código abaixo foi adicionado ao método `OnPostConfirmationAsync` do arquivo [ExternalLogin.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/ExternalLogin.cshtml.cs). Os tokens são salvos na tabela **AspNetUserTokens**. Se a chamada para o método `SetAuthenticationTokenAsync` já existe, esta etapa deve ser ignorada.
+
+``` C#
+foreach (var token in info.AuthenticationTokens)
+{
+    await _userManager.SetAuthenticationTokenAsync(user, info.LoginProvider, token.Name, token.Value);
+}
+```
+
+* **Google**
+
+Assim como a configuração do Facebook, o pacote nuget do Google deve ser adicionado ao projeto e está listado na seção [Versões utilizadas](#versões-utilizadas). Depois disso, um aplicativo precisa ser criado na [página de desenvolvedores do Google](https://console.developers.google.com/). Duas etapas devem ser concluídas, adicionar o aplicativo e configurar o cliente OAuth como Servidor Web.
+
+Quando o aplicativo é criado na página de desenvolvedores do Google, as chaves **ClientId** e **ClientSecret** são geradas e devem ser inseridas no arquivo `secrets.json` do projeto. A seguir são apresentadas as configurações utilizadas no secrets.json do projeto.
+
+``` JSON
+{
+    "SocialNetworkAuthentication": {
+        "Google": {
+            "ClientId": "",
+            "ClientSecret": ""
+        }
+    }
+}
+```
+
+Após a criação do aplicativo e configuração do secrets.json, o arquivo `Startup.cs` deve ser configurado. Para isso o código abaixo deve ser adicionado no método `ConfigureServices` no arquivo Startup.cs.
+
+``` C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthentication()
+            .AddGoogle(googleOptions => GetGoogleOptions(googleOptions));
+}
+
+private void GetGoogleOptions(GoogleOptions googleOptions)
+{
+    googleOptions.ClientId = Configuration["SocialNetworkAuthentication:Google:ClientId"];
+    googleOptions.ClientSecret = Configuration["SocialNetworkAuthentication:Google:ClientSecret"];
+    googleOptions.SaveTokens = true;
+}
+```
+
+Outra etapa importante é salvar os tokens do Google gerados na autenticação. Para isso, o código abaixo foi adicionado ao método `OnPostConfirmationAsync` do arquivo [ExternalLogin.cshtml.cs](./AspNetCoreIdentityLab.Application/Areas/Identity/Pages/Account/ExternalLogin.cshtml.cs). Os tokens são salvos na tabela **AspNetUserTokens**. Se a chamada para o método `SetAuthenticationTokenAsync` já existe, esta etapa deve ser ignorada.
+
+``` C#
+foreach (var token in info.AuthenticationTokens)
+{
+    await _userManager.SetAuthenticationTokenAsync(user, info.LoginProvider, token.Name, token.Value);
+}
+```
+
+### Identificando logins do mesmo usuário de diferentes IPS
+
+Alguns aplicativos bloqueiam ou notificam logins do mesmo usuário em IPs diferentes. É uma regra de segurança.
+
+Um exemplo deste recurso é fornecido pelas classes [UserLoginIp](./AspNetCoreIdentityLab.Persistence/DataTransferObjects/UserLoginIp.cs), [UserLoginIPService](./AspNetCoreIdentityLab.Application/Services/UserLoginIPService.cs) and [UserLoginIPMapper](./AspNetCoreIdentityLab.Persistence/Mappers/UserLoginIPMapper.cs).
+
+Basicamente a aplicação compara o IP de login com o IP do último login salvo na tabela `UserLoginIp`. Se os IPs forem diferentes, um e-mail é enviado ao usuário.
+
+### User Impersonation
+
+Impersonation é quando um usuário administrador está conectado com os mesmos privilégios de um usuário, mas sem saber sua senha ou outras credenciais. Isso significa que o usuário de suporte experimentará o sistema como se fosse o usuário personificado. A User Impersonation **é útil em sistemas SaaS** para investigar/corrigir problemas que os clientes encontram.
+
+Impersonation é baseada em escolher algum usuário e logar com este usuário no aplicativo. Para isso, uma lista de usuários foi adicionada na [Home page](./AspNetCoreIdentityLab.Application/Views/Home/Index.cshtml). Com esta lista é possível escolher um usuário para personificar.
+
+O [Home controller](./AspNetCoreIdentityLab.Application/Controllers/HomeController.cs) tem duas actions chamadas `ImpersonateUser` e `StopImpersonation` que são auto explicativas.
+
+Abaixo é mostrada uma imagem que mostra a funcionalidade de Impersonation:
+
+![image info](./readme-pictures/user-impersonation.jpg)
+
+Além disso, uma classe chamada [ImpersonateExtensions](./AspNetCoreIdentityLab.Application/Tools/ImpersonateExtensions.cs) foi adicionada para gerar o nome do perfil do usuário conectado. Para completar a solução, uma configuração teve que ser feita no `Startup.cs` para evitar o término do Impersonation na atualização do SecurityStampToken.
