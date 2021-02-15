@@ -55,6 +55,11 @@ Após os estudos de caso, as principais conclusões foram documentadas neste arq
     * [Json Web Token (JWT)](#json-web-token-jwt)
     * [Recursos da API](#recursos-da-api)
 * [Api REST de autorização](#api-rest-de-autorização)
+* [Autorizações dinâmicas](#autorizações-dinâmicas)
+    * [Tipos de autorização](#tipos-de-autorização)
+    * [Como as autorizações dinâmicas funcionam?](#como-as-autorizações-dinâmicas-funcionam)
+    * [Estrutura das classes de recurso](#estrutura-das-classes-de-recurso)
+    * [Estrutura do banco de dados](#estrutura-do-banco-de-dados)
 
 ## Pré-requisitos
 
@@ -1161,3 +1166,131 @@ Para mostrar exemplos alguns controladores vão ser apresentados:
 * [UserClaimsController](./AspNetCoreIdentityLab.Api/Controllers/UserClaimsController.cs): expõe recursos para associar claims to users;
 
 >É importante observar que este exemplo de API não pretende seguir todas as boas práticas recomendadas de design de API e provavelmente não está seguindo. O objetivo principal é apresentar uma maneira de acessar os recursos do ASP.NET Core Identity por meio de uma API.
+
+## Autorizações dinâmicas
+
+Vários aplicativos precisam de flexibilidade em seu mecanismo de autorização, especialmente aplicativos corporativos que possuem muitos módulos, submódulos e recursos. Porém para criar uma solução de autorização com mais flexibilidade é necessário criar muitas policies no código fonte. Esta situação causa vários problemas:
+
+* Necessidade de criar várias policies no código fonte;
+* Necessidade de fazer um novo deploy na aplicação quando novas policies são criadas;
+* Necessidade de editar strings em controladores;
+* Necessidade de adicionar novas Roles nos controladores ao trabalhar com autorização com múltiplas Roles;
+* Difícil de trabalhar com estrutura de módulos e submódulos;
+
+Diante desses problemas, a seguir será apresentada uma **proposta de solução para autorização dinâmica**. Esta solução visa evitar os problemas acima e fornecer uma maneira fácil de autorizar usuários em módulos, submódulos, recursos e ações.
+
+### Tipos de autorização
+
+Na maioria dos aplicativos, os requisitos de autorização se dividem em duas partes:
+
+* **Features**: disponibiliza aos usuários a capacidade de acessar módulos, submódulos ou recursos de aplicação;
+* **Data**: configura os dados que os usuários podem visualizar, editar ou excluir. Por exemplo, você pode ver suas informações pessoais, mas não as informações pessoais de outras pessoas.
+
+>Nesta solução, apenas o tipo **Features** é implementado porque esse tipo é o mais comum em aplicativos.
+
+Por curiosidade, uma solução para a autorização `Data type` pode usar uma coluna chamada **OwnedBy** nas tabelas do banco de dados. Esta coluna mostra quem é o proprietário das informações, para que o aplicativo apresente as informações apenas para as pessoas certas.
+
+### Como as autorizações dinâmicas funcionam?
+
+* O desenvolvedor deve adicionar o nome das permissões no enumerador [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs). O atributo Display é usado para mostrar o nome da ação na API de recursos;
+* O desenvolvedor deve adicionar o atributo `HasPermission` no [controller](./AspNetCoreIdentityLab.Api/Controllers/EmployeeController.cs) ou action que precisa ser autorizada;
+* O desenvolvedor deve adicionar o recurso na classe [ResourceCollection](./AspNetCoreIdentityLab.Api/DynamicAuthorization/ResourceCollection.cs) de forma que a aplicação possa saber quais recursos estão disponíveis;
+* A aplicação deve ter funcionalidades que permitam a um usuário criar Roles, associar recursos a uma Role específica, associar usuários a Roles e associar recursos a um usuário específico;
+* A aplicação deve chamar a api para salvar as policies e ids das policies relacionadas a Roles e usuários;
+* Em tempo de execução quando um controllador ou action são executados a classe [AuthorizationPolicyProvider](./AspNetCoreIdentityLab.Api/DynamicAuthorization/AuthorizationPolicyProvider.cs) em conjunto com [PermissionRequirement](./AspNetCoreIdentityLab.Api/DynamicAuthorization/PermissionRequirement.cs) e [PermissionHandler](./AspNetCoreIdentityLab.Api/DynamicAuthorization/PermissionHandler.cs) criam dinamicamente a policy e verifica que o usuário tem a claim necessária associada.
+
+Para explicar como funciona essa solução de autorização dinâmica, algumas imagens serão mostradas.
+
+![image info](./readme-pictures/permissions-and-resources.png)
+
+A **imagem 01** mostra uma classe chamada [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) que é usada para enumerar as permissões que a aplicação deve possuir. Estas permissões podem ser usadas nos [controllers](./AspNetCoreIdentityLab.Api/Controllers/EmployeeController.cs) para habilitar a autorização. É importante obsevar que o atributo [HasPermission](./AspNetCoreIdentityLab.Api/DynamicAuthorization/HasPermissionAttribute.cs) deve ser usado.
+
+Além disso cada permissão existente no enumerador Permissions representa um recurso dentro da classe [ResourceCollection](./AspNetCoreIdentityLab.Api/DynamicAuthorization/ResourceCollection.cs). Mais detalhes são mostrados na seção [Estrutura das classes de recurso](#estrutura-das-classes-de-recurso).
+
+![image info](./readme-pictures/resource-roles-claims-api.png)
+
+A **imagem 02** mostrar um processo que transforma os dados da classe ResourceCollection em autorizações que são armazenadas nas tabelas do banco de dados do ASP.NET Core Identity. A classe [ResourceController](./AspNetCoreIdentityLab.Api/Controllers/ResourceController.cs) monta uma resposta json que pode ser usada pela aplicação para listar os recursos que podem ser autorizados a um usuário específico ou a uma Role específica.
+
+A resposta json possui os recursos e policies para a aplicação. Portanto, o usuário administrador deve associar outros usuários a recursos ou Roles. Os controladores abaixo podem ser usados para armazenar os dados:
+
+* [PolicyController](./AspNetCoreIdentityLab.Api/Controllers/PolicyController.cs): deve ser usado para salvar policies;
+* [RoleController](./AspNetCoreIdentityLab.Api/Controllers/RoleController.cs): deve ser usado para salvar roles;
+* [RoleClaimsController](./AspNetCoreIdentityLab.Api/Controllers/RoleClaimsController.cs): deve ser usado para associar claims a uma role específica;
+* [UserClaimsController](./AspNetCoreIdentityLab.Api/Controllers/UserClaimsController.cs): deve ser usado para associar claims a um usuário específico.
+
+![image info](./readme-pictures/policy-model-database.png)
+
+A **imagem 03** apresenta como os dados da estrutura de autorização são organizados. Mais detalhes na seção [Estrutura do banco de dados](#estrutura-do-banco-de-dados). No entanto, em poucas linhas, as Roles podem ser entendidas como grupos de usuários e essas roles podem ter policies associadas. Da mesma forma, autorizações individuais podem ser armazenadas em Claims de um usuário com as próprias policies.
+
+### Estrutura das classes de recurso
+
+Sabemos que o software não trivial exige um conjunto de muitos menus e funcionalidades aninhadas. Não é difícil ver aplicações empresariais com centenas de funcionalidades. Em geral, essa organização é feita em módulos, submódulos e suas funcionalidades. E não é tudo, às vezes é necessário autorizar diferentes ações no mesmo recurso como: Criar, Excluir, Ler e Atualizar.
+
+Abaixo está um pequeno exemplo de um aplicativo corporativo com módulos, submódulos, funcionalidades e suas ações:
+
+![image info](./readme-pictures/resource-hierarchy.jpg)
+
+A grande questão é: **Como modelar essa estrutura em um design de classes?** e mais **Como conectar essa estrutura com o mecanismo de autorização?**
+
+A seguir é mostrado um diagrama básico de classes que apresenta uma estrutura de recursos. Esses recursos podem ser módulos, submódulos e funcionalidades de uma aplicação ou recursos de API que precisam ser autorizados.
+
+![image info](./readme-pictures/resource-class-diagram.png)
+
+A principal classe é chamada [Resource](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Resource.cs). Esta classe podem representar uma funcionalidade, módulo ou submódulos incluíndo recursos de API se necessários. Uma lista de recursos e [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) podem ser adicionados a um recurso específico.
+
+A classe [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) representa as permissões que são usadas nos controladores. Esta classe usa a classe [UserAction](./AspNetCoreIdentityLab.Api/DynamicAuthorization/UserAction.cs) que tem algumas constantes usadas no `Display Attribute`. 
+
+[ResourceCollection](./AspNetCoreIdentityLab.Api/DynamicAuthorization/ResourceCollection.cs) é uma classe que representa a hierarquia de recursos aninhados. Isso deve ser usado para definir opções para relacionar funcionalidades a Roles, usuários e o menu do usuário. Abaixo é mostrado um código baseado na imagem apresentada no início da sessão.
+
+``` C#
+public class ResourceCollection
+{
+    public static Resource Get()
+    {
+         return new Resource("Menu").Add(
+                new Resource("Logistics", Permissions.CanAccessLogistics),
+                new Resource("Accounting", Permissions.CanAccessAccounting),
+                new Resource("Human Resources").Add(
+                    new Resource("Employees").Add(
+                        new Resource("Employee Registration").Add(
+                            Permissions.CanCreateEmployee,
+                            Permissions.CanDeleteEmployee,
+                            Permissions.CanReadEmployee,
+                            Permissions.CanUpdateEmployee
+                        ),
+                        new Resource("Dependents Registration").Add(
+                            Permissions.CanCreateDependents,
+                            Permissions.CanDeleteDependents,
+                            Permissions.CanReadDependents,
+                            Permissions.CanUpdateDependents
+                        )
+                    ),
+                    new Resource("Vacation").Add(
+                        new Resource("Vacation Planning").Add(
+                            Permissions.CanCreateVacationPlanning,
+                            Permissions.CanReadVacationPlanning
+                        ),
+                        new Resource("Payment History", Permissions.CanAccessPaymentHistory),
+                        new Resource("Reports").Add(
+                            new Resource("Time Report", Permissions.CanAccessTimeReport),
+                            new Resource("Costs Report", Permissions.CanAccessCostsReport),
+                            new Resource("Vacation by Period", Permissions.CanAccessVacationByPeriod)
+                        )
+                    )
+                )
+            );
+    }
+}
+```
+
+### Estrutura do banco de dados
+
+Já foi apresentado que cada `Permission` do enumerador [Permissions](./AspNetCoreIdentityLab.Api/DynamicAuthorization/Permissions.cs) é usado com o atributo [HasPermission](./AspNetCoreIdentityLab.Api/DynamicAuthorization/HasPermissionAttribute.cs) nos controladores que precisam ser autorizados.
+
+Essas permissões representam policies que serão criadas dinamicamente em tempo de execução na aplicação. Após a associação de recursos com roles ou usuários, os ids das policies devem ser salvos no banco de dados nas tabelas `AspNetUserClaims` ou `AspNetRoleClaims` usando os campos chamados `ClaimValue`.
+
+Uma tabela chamada `Policy` foi criada para armazenar as policies. O campo Id é baseado no índice do enumerador da classe Permissions e o campo Nome na descrição do item do enumerador. A imagem abaixo mostra a relação entre a tabela de policies e as tabelas de claims.
+
+![image info](./readme-pictures/policy-database-detail.png)
+
+É importante dizer que as **chaves estrangeiras entre as tabelas não foram estabelecidas**. A tabela `Policy` serve apenas para esclarecer os dados sobre quais policies são armazenadas em outras tabelas. Elas estão relacionadas entre si por meio do campo Id da tabela Policy com o campo ClaimValue das outras tabelas.
